@@ -4,7 +4,7 @@ package io.github.dilluter;
  * Hello world!
  *
  */
-public class App 
+public class ClientesApplication
 {
     public static void main( String[] args )
     {
