@@ -1,12 +1,14 @@
 package io.github.dilluter.model.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
 
 @Entity
 @Data
+@Builder
 public class Servico {
 
     @Id

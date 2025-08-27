@@ -1,25 +1,34 @@
 package io.github.dilluter.model.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
 @Entity
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "cliente")
 public class Cliente {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Integer id;
 
-    @Column(nullable = false, length = 150)
+    @Column(name = "nome",nullable = false, length = 150)
     private String nome;
-    @Column(nullable = false, length = 11)
+    @Column(name = "cpf",nullable = false, length = 11)
     private String cpf;
-    @Column
+    @Column(name = "data_cadastro")
     private LocalDate dataDeCadastro;
+    @PrePersist
+    public void prePersist(){
+        setDataDeCadastro(LocalDate.now());
+    }
 
 }
