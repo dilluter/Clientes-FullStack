@@ -4,11 +4,13 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import lombok.Data;
 
 import java.time.LocalDate;
 
 @Entity
-public class cliente {
+@Data
+public class Cliente {
     @Id
     @GeneratedValue
     private Integer id;
@@ -19,4 +21,5 @@ public class cliente {
     private String cpf;
     @Column
     private LocalDate dataDeCadastro;
+
 }
