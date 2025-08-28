@@ -10,25 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @SpringBootApplication
 public class ClientesApplication {
+
+
     public static void main(String[] args) {
         SpringApplication.run(ClientesApplication.class, args);
-    }
-
-    @Bean
-    public CommandLineRunner run(@Autowired ClienteRepository repository) {
-        return args -> {
-            Cliente cliente = Cliente.builder()
-                    .cpf("00000000000")
-                    .nome("Fulano")
-                    .build();
-
-            if (repository.findByCpf("00000000000").isEmpty()) {
-                repository.save(cliente);
-                System.out.println("Cliente salvo!");
-            } else {
-                System.out.println("Cliente já existe no banco.");
-            }
-        };
     }
 }
 
