@@ -2,6 +2,8 @@ package io.github.dilluter.rest;
 
 import io.github.dilluter.model.entity.Cliente;
 import io.github.dilluter.model.repository.ClienteRepository;
+import io.github.dilluter.rest.exception.ApiErrors;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +22,7 @@ public class ClienteController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Cliente salvar( @RequestBody Cliente cliente){
+    public Cliente salvar( @RequestBody @Valid Cliente cliente){
         return repository.save(cliente);
     }
 
@@ -45,7 +47,7 @@ public class ClienteController {
     }
     @PutMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void atualizar(@PathVariable Integer id, @RequestBody Cliente clienteAtualizado){
+    public void atualizar(@PathVariable Integer id, @RequestBody @Valid Cliente clienteAtualizado){
         repository
                 .findById(id)
                 .map(Cliente ->{
@@ -55,6 +57,6 @@ public class ClienteController {
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Cliente não encontrado"
                 ));
-    }
-}
+    }}
+
 
