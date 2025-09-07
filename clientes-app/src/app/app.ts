@@ -1,19 +1,15 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { HelloComponent } from './hello/hello.component';
+import { Navbar } from './template/navbar/navbar';
 
 @Component({
   selector: 'app-root',
-  standalone: true,
-  imports: [RouterOutlet, HelloComponent],
-  template: `
-    <h1>{{ title() }}</h1>
-    <app-hello></app-hello>
-    <router-outlet></router-outlet>
-  `,
-  styleUrls: ['./app.css']
+  standalone: true,           
+  imports: [RouterOutlet,Navbar],
+  templateUrl: './app.html',
+  styleUrl: './app.css'
 })
-export class AppComponent {
+export class App {
   protected readonly title = signal('clientes-app');
 }
 

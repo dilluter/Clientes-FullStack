@@ -22,7 +22,12 @@
               }
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.css",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css"
+            ],
+            "scripts": [
+              "node_modules/jquery/dist/jquery.js",
+              "node_modules/bootstrap/dist/js/bootstrap.bundle.js"
             ],
             "server": "src/main.server.ts",
             "outputMode": "server",
@@ -88,6 +93,6 @@
     }
   },
   "cli": {
-    "analytics": false
+    "analytics": "7b3b3172-3c07-43d3-935f-1b5c95c0fd86"
   }
 }
