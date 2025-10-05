@@ -1,0 +1,4 @@
+# Informa ao GitHub para não incluir estes arquivos nas estatísticas de linguagem
+
+clientes-app/src/assets/css/bootstrap.min.css linguist-vendored
+clientes-app/src/assets/js/jquery.js linguist-vendored
