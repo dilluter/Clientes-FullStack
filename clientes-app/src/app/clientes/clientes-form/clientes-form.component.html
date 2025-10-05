@@ -1,4 +1,52 @@
-<h1 class="mt-4">CLIENTES_FORM</h1>
+<h1 class="mt-4">Clientes</h1>
 <ol class="breadcrumb mb-4">
-    <li class="breadcrumb-item active">Bem vindo</li>
+    <li class="breadcrumb-item active">Cadastro</li>
 </ol>
+
+<div class="container-fluid">
+    <form>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="ID">ID</label>
+                <input type="text" class="form-control" id="ID" name="id" placeholder="ID" readonly aria-label="ID">
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="dataCadastro">Data de Cadastro</label>
+                <input type="date" class="form-control" id="dataCadastro" name="dataCadastro" aria-label="Data de Cadastro" disabled>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="nome">Nome</label>
+                <input type="text" class="form-control" id="nome" name="nome*" placeholder="Nome completo" required autocomplete="name" aria-label="Nome">
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="cpf">CPF</label>
+                <input
+                    type="text"
+                    class="form-control"
+                    id="cpf"
+                    name="cpf*"
+                    placeholder="000.000.000-00"
+                    inputmode="numeric"
+                    pattern="\d{3}\.\d{3}\.\d{3}-\d{2}"
+                    maxlength="14"
+                    required
+                    aria-label="CPF"
+                >
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-2">
+            <button type="submit" class="btn btn-success">
+            <i class="fa fa-save"></i> Salvar
+            </button>
+        </div>
+        </div>
+    </form>
+</div>
+
