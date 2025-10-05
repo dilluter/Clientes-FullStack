@@ -2,3 +2,8 @@
 
 clientes-app/src/assets/css/bootstrap.min.css linguist-vendored
 clientes-app/src/assets/js/jquery.js linguist-vendored
+# Ignora o conteúdo da pasta node_modules nas estatísticas de linguagem
+clientes-app/node_modules/* linguist-vendored
+
+# Ignora o arquivo principal de estilos (styles.css) nas estatísticas
+clientes-app/src/styles.css linguist-vendored
