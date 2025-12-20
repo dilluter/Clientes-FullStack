@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Cliente } from '../cliente';
+import { ClientesService } from '../../clientes.service';
 
 @Component({
   selector: 'app-clientes-form',
@@ -7,14 +8,20 @@ import { Cliente } from '../cliente';
   styleUrls: ['./clientes-form.component.css']
 })
 export class ClientesFormComponent implements OnInit {
+
   cliente: Cliente;
 
-  constructor() { 
+  constructor(private service: ClientesService) {
     this.cliente = new Cliente();
   }
 
-  ngOnInit(): void {
+  ngOnInit(): void {}
+
+  onSubmit() {
+    this.service
+      .salvar(this.cliente)
+      .subscribe(response => {
+        console.log(response);
+      });
   }
-clicar() {
-  console.log(this.cliente);
-}}
+}

@@ -11,6 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/clientes")
+@CrossOrigin("*")
 public class ClienteController {
 
     private final ClienteRepository repository;
