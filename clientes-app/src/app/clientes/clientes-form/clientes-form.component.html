@@ -5,6 +5,17 @@
 
 <div class="container-fluid">
     <form #clienteForm="ngForm" (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="alert alert-success" role="alert" *ngIf="success == true">
+            Cliente salvo/atualizado com sucesso!
+          </div>
+          <div class="alert alert-danger" role="alert" *ngFor="let erro of erros">
+            {{erro}}
+          </div>
+        </div>
+      </div>
+
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label for="ID">ID</label>
@@ -21,7 +32,7 @@
             <div class="col-md-6 mb-3">
                 <label for="nome">Nome</label>
                 <input type="text" class="form-control" id="nome" name="nome*" placeholder="Nome completo" required autocomplete="name" aria-label="Nome"
-                        [(ngModel)]="cliente.nome" name="nome">
+                        [(ngModel)]="cliente.nome">
             </div>
 
             <div class="col-md-6 mb-3">
