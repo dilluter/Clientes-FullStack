@@ -4,10 +4,13 @@ import io.github.dilluter.model.entity.Cliente;
 import io.github.dilluter.model.repository.ClienteRepository;
 import io.github.dilluter.rest.exception.ApiErrors;
 import jakarta.validation.Valid;
+import jdk.dynalink.linker.LinkerServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/clientes")
@@ -19,6 +22,11 @@ public class ClienteController {
     @Autowired
     public ClienteController(ClienteRepository repository) {
         this.repository = repository;
+    }
+
+    @GetMapping
+    public List<Cliente> obtertodos() {
+        return repository.findAll();
     }
 
     @PostMapping
