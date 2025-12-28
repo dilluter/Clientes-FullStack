@@ -1,0 +1,115 @@
+<div class="container-fluid mt-3">
+
+  <div *ngIf="success" class="alert alert-success" role="alert">
+    Cliente deletado com sucesso.
+  </div>
+
+  <div *ngIf="errors && errors.length" class="alert alert-danger" role="alert">
+    <div *ngFor="let error of errors">{{ error }}</div>
+  </div>
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a routerLink="/home">Home</a>
+      </li>
+      <li class="breadcrumb-item active">
+        Clientes
+      </li>
+    </ol>
+  </nav>
+
+  <div class="card shadow-sm">
+
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">
+        <i class="fa fa-users"></i> Lista de Clientes
+      </h5>
+
+      <button
+        class="btn btn-success btn-sm"
+        routerLink="/clientes-form">
+        + Novo Cliente
+      </button>
+    </div>
+
+    <div class="card-body">
+
+      <div class="table-responsive">
+        <table class="table table-hover table-striped align-middle">
+          <thead class="table-dark">
+          <tr>
+            <th style="width: 70px">ID</th>
+            <th>Nome</th>
+            <th>CPF</th>
+            <th style="width: 140px">Data Cadastro</th>
+            <th class="text-center" style="width: 160px">Ações</th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <tr *ngFor="let cliente of clientes">
+            <td>{{ cliente.id }}</td>
+            <td>{{ cliente.nome }}</td>
+            <td>{{ cliente.cpf }}</td>
+            <td>{{ cliente.dataDeCadastro }}</td>
+            <td class="text-center">
+              <button class="btn btn-secondary"
+                      routerLink="/clientes-form/{{ cliente.id }}">
+                <i class="fa fa-edit"></i>
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-secondary"
+                (click)="preparaDelecao(cliente)"
+                data-toggle="modal"
+                data-target="#idDoSeuModal">
+                <i class="fa fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+
+
+          <tr *ngIf="clientes?.length === 0">
+            <td colspan="5" class="text-center text-muted">
+              Nenhum cliente encontrado
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="modal fade" id="idDoSeuModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirmar exclusão</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Tem certeza que deseja excluir o cliente
+          <strong>{{ clienteSelecionado?.nome }}</strong>?
+        </div>
+        <div class="modal-footer">
+          <button type="button"
+                  class="btn btn-secondary"
+                  data-dismiss="modal">
+            Cancelar
+          </button>
+          <button type="button"
+                  class="btn btn-danger"
+                  data-dismiss="modal"
+                  (click)="confirmarDelecao()">
+            Excluir
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

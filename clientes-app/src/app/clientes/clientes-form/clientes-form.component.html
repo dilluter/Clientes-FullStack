@@ -9,7 +9,7 @@
         <a routerLink="/clientes-lista">Clientes</a>
       </li>
       <li class="breadcrumb-item active">
-        Cadastro
+        {{ cliente.id ? 'Edição' : 'Cadastro'}}
       </li>
     </ol>
   </nav>
@@ -20,7 +20,7 @@
 
       <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0">
-          <i class="fa fa-user"></i> Cadastro de Clientes
+          <i class="fa fa-user"></i> {{ cliente.id ? 'Edição de Clientes' : 'Cadastro de Clientes'}}
         </h5>
 
         <button
@@ -35,7 +35,7 @@
 
         <div class="row mb-3">
           <div class="alert alert-success" *ngIf="success">
-            Cliente salvo com sucesso!
+            Cliente salvo/atualizado com sucesso!
           </div>
 
           <div
@@ -93,7 +93,11 @@
         <div class="d-flex gap-2 mt-3">
           <button
             type="submit"
-            class="btn btn-success">Salvar
+            class="btn btn-success"*ngIf="!cliente.id">Salvar
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"*ngIf="cliente.id">Atualizar
           </button>
           <button
             type="button"

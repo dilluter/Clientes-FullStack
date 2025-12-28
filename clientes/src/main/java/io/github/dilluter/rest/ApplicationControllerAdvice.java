@@ -2,6 +2,7 @@ package io.github.dilluter.rest;
 
 import io.github.dilluter.rest.exception.ApiErrors;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -19,16 +20,18 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 @ControllerAdvice
 public class ApplicationControllerAdvice {
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiErrors handleValidationErros(MethodArgumentNotValidException ex) {
         BindingResult bindingResult = ex.getBindingResult();
         List<String> messages = bindingResult.getAllErrors()
                 .stream()
-                .map( objectError -> objectError.getDefaultMessage())
+                .map(objectError -> objectError.getDefaultMessage())
                 .collect(Collectors.toList());
         return new ApiErrors(messages);
     }
+
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity handleResponseStatusException(ResponseStatusException ex) {
         String messagemErro = ex.getMessage();
@@ -36,5 +39,10 @@ public class ApplicationControllerAdvice {
         ApiErrors apiErrors = new ApiErrors(messagemErro);
         return new ResponseEntity(apiErrors, codigoStatus);
     }
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiErrors handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+        String mensagem = "Já existe um cliente com esse CPF.";
+        return new ApiErrors(mensagem);
+    }
 }
-

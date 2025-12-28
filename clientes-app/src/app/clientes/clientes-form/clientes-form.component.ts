@@ -26,26 +26,53 @@ export class ClientesFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Usamos o snapshot para pegar o ID da URL de forma direta
-    let id = this.activatedRoute.snapshot.params['id'];
+    const idParam = this.activatedRoute.snapshot.params['id'];
 
-    if (id) {
-      this.id = id;
+    if (idParam) {
+      this.id = idParam;
       this.service
         .getClientesById(this.id)
         .subscribe(
           response => this.cliente = response,
-          errorResponse => {
+          () => {
             this.cliente = new Cliente();
             this.errors = ['Erro ao carregar o cliente.'];
           }
         );
     }
   }
+
   onSubmit() {
     this.success = false;
     this.errors = [];
 
+    // EDITAR (PUT)
+    if (this.id) {
+      this.service
+        .atualizar(this.cliente)
+        .subscribe(
+          response => {
+            this.success = true;
+            this.errors = [];
+            this.cliente = response;
+
+            setTimeout(() => {
+              this.router.navigate(['/clientes-lista']);
+            }, 800);
+          },
+          errorResponse => {
+            if (errorResponse.status === 400 &&
+              errorResponse.error?.error === 'Já existe um cliente com esse CPF.') {
+              this.errors = ['Já existe um cliente com esse CPF.'];
+            } else {
+              this.errors = ['Erro ao atualizar o cliente.'];
+            }
+          }
+        );
+      return;
+    }
+
+    // CRIAR (POST)
     this.service.salvar(this.cliente).subscribe(
       response => {
         this.success = true;
@@ -57,8 +84,14 @@ export class ClientesFormComponent implements OnInit {
         }, 800);
       },
       errorResponse => {
-        this.success = false;
-        this.errors = errorResponse.error.errors;
+        if (errorResponse.status === 400 &&
+          errorResponse.error?.error === 'Já existe um cliente com esse CPF.') {
+          this.errors = ['Já existe um cliente com esse CPF.'];
+        } else if (errorResponse.error?.errors) {
+          this.errors = errorResponse.error.errors;
+        } else {
+          this.errors = ['Erro ao salvar o cliente.'];
+        }
       }
     );
   }

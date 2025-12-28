@@ -13,7 +13,12 @@ export class ClientesService {
   salvar(cliente: Cliente): Observable<Cliente> {
     return this.http.post<Cliente>('http://localhost:8081/api/clientes', cliente);
   }
-
+  atualizar(cliente: Cliente): Observable<any> {
+    return this.http.put<Cliente>(`http://localhost:8081/api/clientes/${cliente.id}`, cliente);
+  }
+  delete(cliente: Cliente): Observable<any> {
+    return this.http.delete<void>(`http://localhost:8081/api/clientes/${cliente.id}`);
+  }
   getClientes(): Observable<Cliente[]> {
     return this.http.get<Cliente[]>('http://localhost:8081/api/clientes');
   }
