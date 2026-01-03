@@ -1,15 +1,17 @@
 package io.github.dilluter.model.entity;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Entity
 @Data
 @Builder
-public class Servico {
+@NoArgsConstructor
+@AllArgsConstructor
+public class ServicoPrestado {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,9 +21,12 @@ public class Servico {
     private String descricao;
 
     @ManyToOne
-    @JoinColumn(name = "id cliente")
+    @JoinColumn(name = "id_cliente", nullable = false)
     private Cliente cliente;
 
-    @Column
+    @Column(nullable = false)
     private BigDecimal valor;
+
+    @Column(nullable = false)
+    private LocalDate data;
 }
