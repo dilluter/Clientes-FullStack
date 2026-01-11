@@ -5,6 +5,7 @@ import io.github.dilluter.model.entity.ServicoPrestado;
 import io.github.dilluter.model.repository.ClienteRepository;
 import io.github.dilluter.model.repository.ServicoPrestadoRepository;
 import io.github.dilluter.rest.dto.ServicoPrestadoDTO;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +25,7 @@ public class ServicoPrestadoController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ServicoPrestado salvar(@RequestBody ServicoPrestadoDTO dto) {
+    public ServicoPrestado salvar(@RequestBody @Valid ServicoPrestadoDTO dto) {
 
         LocalDate data = LocalDate.parse(
                 dto.getData(),

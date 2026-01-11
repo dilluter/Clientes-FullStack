@@ -46,7 +46,6 @@ export class ClientesFormComponent implements OnInit {
     this.success = false;
     this.errors = [];
 
-    // EDITAR (PUT)
     if (this.id) {
       this.service
         .atualizar(this.cliente)
@@ -72,7 +71,6 @@ export class ClientesFormComponent implements OnInit {
       return;
     }
 
-    // CRIAR (POST)
     this.service.salvar(this.cliente).subscribe(
       response => {
         this.success = true;

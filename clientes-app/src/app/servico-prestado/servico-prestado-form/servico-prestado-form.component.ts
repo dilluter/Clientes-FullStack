@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import {Cliente} from '../../clientes/cliente';
-import {ClientesService} from '../../clientes.service';
-import {FormGroup} from '@angular/forms';
-import {ServicoPrestado} from '../servicoPrestado';
+import { Cliente } from '../../clientes/cliente';
+import { ClientesService } from '../../clientes.service';
+import { ServicoPrestado } from '../servicoPrestado';
 import { ServicoPrestadoService } from '../../servico-prestado.service';
 
 @Component({
@@ -14,6 +13,8 @@ export class ServicoPrestadoFormComponent implements OnInit {
 
   clientes: Cliente[] = [];
   servicoPrest: ServicoPrestado;
+  success: boolean = false;
+  errors: string[] = [];
 
   constructor(
     private clienteService: ClientesService,
@@ -27,9 +28,30 @@ export class ServicoPrestadoFormComponent implements OnInit {
       .subscribe(response => this.clientes = response);
   }
 
-  onSubmit(){
+  onSubmit() {
     this.servicoPrestadoService.salvar(this.servicoPrest)
-      .subscribe(response => { console.log (response);
-      });
+      .subscribe(
+        response => {
+          this.success = true;
+          this.errors = [];
+          this.servicoPrest = new ServicoPrestado();
+        },
+        errorResponse => {
+          this.success = false;
+
+          console.log(errorResponse);
+          console.log(errorResponse.error);
+
+          if (errorResponse.error && errorResponse.error.errors) {
+            this.errors = errorResponse.error.errors;
+          } else if (Array.isArray(errorResponse.error)) {
+            this.errors = errorResponse.error;
+          } else if (typeof errorResponse.error === 'string') {
+            this.errors = [errorResponse.error];
+          } else {
+            this.errors = ['Erro ao processar a requisição.'];
+          }
+        }
+      );
   }
 }
