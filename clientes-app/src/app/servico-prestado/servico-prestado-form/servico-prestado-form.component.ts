@@ -3,6 +3,7 @@ import {Cliente} from '../../clientes/cliente';
 import {ClientesService} from '../../clientes.service';
 import {FormGroup} from '@angular/forms';
 import {ServicoPrestado} from '../servicoPrestado';
+import { ServicoPrestadoService } from '../../servico-prestado.service';
 
 @Component({
   selector: 'app-servico-prestado-form',
@@ -16,16 +17,19 @@ export class ServicoPrestadoFormComponent implements OnInit {
 
   constructor(
     private clienteService: ClientesService,
+    private servicoPrestadoService: ServicoPrestadoService,
   ) {
     this.servicoPrest = new ServicoPrestado();
   }
 
   ngOnInit(): void {
     this.clienteService.getClientes()
-      .subscribe(response => {this.clientes = response;})
+      .subscribe(response => this.clientes = response);
   }
 
   onSubmit(){
-    console.log('this.servico');
+    this.servicoPrestadoService.salvar(this.servicoPrest)
+      .subscribe(response => { console.log (response);
+      });
   }
 }
