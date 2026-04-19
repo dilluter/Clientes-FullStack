@@ -27,7 +27,7 @@ export class ServicoPrestadoService {
 
     httpParams = httpParams.set('nome', nome);
 
-    if (mes) {
+    if (mes !== null ) {
       httpParams = httpParams.set('mes', mes.toString());
     }
     return this.http.get<ServicoPrestadoBusca[]>(this.apiUrl, {
