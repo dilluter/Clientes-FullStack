@@ -1,10 +1,10 @@
-package io.github.dilluter.rest;
+package io.github.dilluter.controller;
 
 import io.github.dilluter.model.entity.Cliente;
 import io.github.dilluter.model.entity.ServicoPrestado;
 import io.github.dilluter.model.repository.ClienteRepository;
 import io.github.dilluter.model.repository.ServicoPrestadoRepository;
-import io.github.dilluter.rest.dto.ServicoPrestadoDTO;
+import io.github.dilluter.dto.ServicoPrestadoDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

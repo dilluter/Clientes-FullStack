@@ -1,4 +1,4 @@
-package io.github.dilluter.rest.exception;
+package io.github.dilluter.exception;
 
 import lombok.Getter;
 

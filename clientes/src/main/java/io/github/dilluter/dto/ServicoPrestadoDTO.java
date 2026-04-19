@@ -1,4 +1,4 @@
-package io.github.dilluter.rest.dto;
+package io.github.dilluter.dto;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
