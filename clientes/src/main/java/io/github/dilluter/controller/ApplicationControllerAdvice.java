@@ -1,6 +1,6 @@
 package io.github.dilluter.controller;
 
-import io.github.dilluter.rest.exception.ApiErrors;
+import io.github.dilluter.exception.ApiErrors;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
