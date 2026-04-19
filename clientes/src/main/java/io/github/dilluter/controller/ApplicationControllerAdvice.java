@@ -1,7 +1,6 @@
-package io.github.dilluter.rest;
+package io.github.dilluter.controller;
 
-import io.github.dilluter.rest.exception.ApiErrors;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
+import io.github.dilluter.exception.ApiErrors;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;

@@ -1,10 +1,8 @@
-package io.github.dilluter.rest;
+package io.github.dilluter.controller;
 
 import io.github.dilluter.model.entity.Cliente;
 import io.github.dilluter.model.repository.ClienteRepository;
-import io.github.dilluter.rest.exception.ApiErrors;
 import jakarta.validation.Valid;
-import jdk.dynalink.linker.LinkerServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
