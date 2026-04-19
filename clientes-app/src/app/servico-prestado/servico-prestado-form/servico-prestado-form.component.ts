@@ -3,6 +3,7 @@ import { Cliente } from '../../clientes/cliente';
 import { ClientesService } from '../../clientes.service';
 import { ServicoPrestado } from '../servicoPrestado';
 import { ServicoPrestadoService } from '../../servico-prestado.service';
+import { DateUtil } from 'src/app/utils/date.util';
 
 @Component({
   selector: 'app-servico-prestado-form',
@@ -13,12 +14,13 @@ export class ServicoPrestadoFormComponent implements OnInit {
 
   clientes: Cliente[] = [];
   servicoPrest: ServicoPrestado;
-  success: boolean = false;
+  success = false;
   errors: string[] = [];
+  dataFormatada = '';
 
   constructor(
     private clienteService: ClientesService,
-    private servicoPrestadoService: ServicoPrestadoService,
+    private servicoPrestadoService: ServicoPrestadoService
   ) {
     this.servicoPrest = new ServicoPrestado();
   }
@@ -31,16 +33,14 @@ export class ServicoPrestadoFormComponent implements OnInit {
   onSubmit() {
     this.servicoPrestadoService.salvar(this.servicoPrest)
       .subscribe(
-        response => {
+        () => {
           this.success = true;
           this.errors = [];
           this.servicoPrest = new ServicoPrestado();
+          this.dataFormatada = '';
         },
         errorResponse => {
           this.success = false;
-
-          console.log(errorResponse);
-          console.log(errorResponse.error);
 
           if (errorResponse.error && errorResponse.error.errors) {
             this.errors = errorResponse.error.errors;
@@ -54,4 +54,12 @@ export class ServicoPrestadoFormComponent implements OnInit {
         }
       );
   }
+
+  onDataChange(event: any) {
+    const raw = event.target.value;
+
+    this.dataFormatada = DateUtil.format(raw);
+    this.servicoPrest.data = DateUtil.toBackend(this.dataFormatada);
+  }
+
 }

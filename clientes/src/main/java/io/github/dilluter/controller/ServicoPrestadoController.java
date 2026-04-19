@@ -1,4 +1,4 @@
-package io.github.dilluter.rest;
+package io.github.dilluter.controller;
 
 import io.github.dilluter.model.entity.Cliente;
 import io.github.dilluter.model.entity.ServicoPrestado;

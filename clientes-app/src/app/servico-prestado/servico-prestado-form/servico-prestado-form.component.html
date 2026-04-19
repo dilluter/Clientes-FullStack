@@ -25,7 +25,8 @@
           <input type="text"
                  class="form-control"
                  name="data"
-                 [(ngModel)]="servicoPrest.data">
+                 [(ngModel)]="servicoPrest.data"
+                 (input)="onDataChange($event)">
         </div>
       </div>
 
