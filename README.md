@@ -1,4 +1,4 @@
-# 💼 Sistema de Gestão de Clientes e Serviços (Full-Stack)
+#  Sistema de Gestão de Clientes e Serviços (Full-Stack)
 
 Bem-vindo ao repositório do **Clientes-FullStack**! Este é um sistema web completo (Front-End e Back-End) desenvolvido para facilitar o gerenciamento de clientes e o controle de serviços prestados a eles.
 
@@ -6,7 +6,7 @@ O objetivo do sistema é fornecer uma interface intuitiva para cadastrar cliente
 
 ---
 
-## 🎯 Funcionalidades
+##  Funcionalidades
 
 - **Gestão de Clientes:** Cadastro, listagem, edição e exclusão de clientes (CRUD completo).
 - **Registro de Serviços:** Lançamento de serviços prestados, vinculando ao cliente, com descrição, valor e data.
@@ -15,18 +15,18 @@ O objetivo do sistema é fornecer uma interface intuitiva para cadastrar cliente
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
+##  Tecnologias Utilizadas
 
 Este projeto foi construído separando as responsabilidades entre uma API RESTful e uma Single Page Application (SPA).
 
-### 🖥️ Front-End (SPA)
+###  Front-End (SPA)
 - **Angular:** 9.1.1
 - **Node.js:** 16.20.2
 - **NPM:** Gerenciador de pacotes
 - **HTML5 / CSS3 / TypeScript**
 - **Bootstrap** (para estilização e design responsivo)
 
-### ⚙️ Back-End (API REST)
+### ️ Back-End (API REST)
 - **Java:** JDK 21
 - **Spring Boot:** 3.3.3
 - **Spring Data JPA:** Para persistência de dados
@@ -37,7 +37,7 @@ Este projeto foi construído separando as responsabilidades entre uma API RESTfu
 
 ---
 
-## 📋 Pré-requisitos
+##  Pré-requisitos
 
 Para rodar este projeto na sua máquina, você precisará ter instalado:
 
@@ -48,7 +48,7 @@ Para rodar este projeto na sua máquina, você precisará ter instalado:
 
 ---
 
-## 🚀 Como Executar o Projeto
+##  Como Executar o Projeto
 
 O projeto é dividido em duas pastas principais: o back-end (API) e o front-end (App). Primeiro, você deve clonar o repositório e, em seguida, usar **dois terminais** abertos para rodar ambos simultaneamente.
 
@@ -89,7 +89,7 @@ A aplicação Front-End estará disponível no seu navegador em: **http://localh
 
 ---
 
-## 📂 Estrutura do Repositório
+##  Estrutura do Repositório
 
 ```text
 /Clientes-FullStack
