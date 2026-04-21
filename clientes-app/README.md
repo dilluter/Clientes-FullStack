@@ -4,6 +4,28 @@ Este projeto foi gerado com o Angular CLI versão 9.1.1.
 
 ---
 
+## Estilização
+
+Este projeto utiliza **Bootstrap 4** e o template **SB Admin**. A estilização é feita principalmente com classes prontas:
+
+```html
+<!-- Botão -->
+<button class="btn btn-primary">Salvar</button>
+ 
+<!-- Card -->
+<div class="card">
+  <div class="card-header">Título</div>
+  <div class="card-body">Conteúdo</div>
+</div>
+```
+
+Caso necessário, estilos personalizados podem ser adicionados em:
+
+```
+src/styles.css
+```
+---
+
 ##  Pré-requisitos
 
 Antes de iniciar o projeto, instale:
@@ -20,7 +42,7 @@ node -v
 
 ##  Instalação de dependências
 
-Acesse a pasta do projeto Instale as dependências:
+Acesse a pasta do projeto e instale as dependências:
 
 ```bash
 npm install
@@ -60,7 +82,7 @@ ng generate directive|pipe|service|class|guard|interface|enum|module
 
 ---
 
-## 🧪 Testes
+##  Testes
 
 Executar testes unitários:
 
@@ -80,21 +102,24 @@ OS: win32 x64
 Angular: 9.1.1  
 Ivy Workspace: Yes
 
-Pacotes:  
-@angular-devkit/architect         0.901.1  
-@angular-devkit/build-angular     0.901.1  
-@angular-devkit/build-optimizer   0.901.1  
-@angular-devkit/build-webpack     0.901.1  
-@angular-devkit/core              9.1.1  
-@angular-devkit/schematics        9.1.1  
-@ngtools/webpack                  9.1.1  
-rxjs                              6.5.5  
-typescript                        3.8.3  
+### Pacotes principais
+
+```
+@angular-devkit/architect         0.901.1
+@angular-devkit/build-angular     0.901.1
+@angular-devkit/build-optimizer   0.901.1
+@angular-devkit/build-webpack     0.901.1
+@angular-devkit/core              9.1.1
+@angular-devkit/schematics        9.1.1
+@ngtools/webpack                  9.1.1
+rxjs                              6.5.5
+typescript                        3.8.3
 webpack                           4.42.0
+```
 
 ---
 
-## 📚 Ajuda
+##  Ajuda
 
 Para mais informações:
 
@@ -102,5 +127,5 @@ Para mais informações:
 ng help
 ```
 
-Documentação oficial:  
-https://github.com/angular/angular-cli
+Documentação oficial do Angular CLI:
+🔗 https://github.com/angular/angular-cli
