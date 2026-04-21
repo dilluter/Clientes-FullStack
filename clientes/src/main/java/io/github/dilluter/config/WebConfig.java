@@ -21,7 +21,7 @@ public class WebConfig {
         config.setAllowedHeaders(List.of("*"));
         config.setExposedHeaders(List.of("*"));
         config.setMaxAge(3600L);
-        config.setAllowCredentials(false); // já explico
+        config.setAllowCredentials(false);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
 
