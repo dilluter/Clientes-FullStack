@@ -17,8 +17,8 @@ class InternacionalizacaoConfigTest {
 
     @Test
     void deveRecuperarMensagemEmPortugues() {
+        String mensagem = messageSource.getMessage("campo.nome.obrigatorio", null, new Locale("pt", "BR"));
 
-        String mensagem = messageSource.getMessage("campo.obrigatorio", null, new Locale("pt", "BR"));
-        assertThat(mensagem).isEqualTo("Campo obrigatório");
+        assertThat(mensagem).isEqualTo("O campo nome é obrigatório.");
     }
 }
