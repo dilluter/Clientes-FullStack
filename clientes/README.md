@@ -1,10 +1,10 @@
-# Clientes API (Back-End) 🚀
+# Clientes API (Back-End) 
 
 Este é o back-end do sistema **Clientes-FullStack**, uma API RESTful robusta desenvolvida para gerenciar o cadastro de clientes e o registro detalhado de serviços prestados. A aplicação utiliza tecnologias modernas para garantir performance, segurança e facilidade de manutenção.
 
 ---
 
-## 📋 Pré-requisitos
+##  Pré-requisitos
 
 Antes de iniciar, certifique-se de ter instalado em sua máquina:
 
@@ -14,7 +14,7 @@ Antes de iniciar, certifique-se de ter instalado em sua máquina:
 
 ---
 
-## 🛠️ Tecnologias e Frameworks
+##  Tecnologias e Frameworks
 
 O projeto foi construído utilizando o melhor do ecossistema Java:
 
@@ -29,7 +29,7 @@ O projeto foi construído utilizando o melhor do ecossistema Java:
 
 ---
 
-## 🚀 Como Executar a Aplicação
+##  Como Executar a Aplicação
 
 Siga os passos abaixo na pasta raiz do projeto back-end:
 
@@ -43,15 +43,15 @@ A API estará rodando em: http://localhost:8080
 
 ---
 
-## 📖 Documentação da API (Swagger)
+##  Documentação da API (Swagger)
 
 A API possui documentação interativa completa. Para visualizar todos os endpoints disponíveis, verificar os parâmetros de requisição e testar as rotas em tempo real, acesse o painel do Swagger diretamente pelo seu navegador:
 
-🔗 **Acesse o Swagger:** http://localhost:8080/swagger-ui/index.html
+ **Acesse o Swagger:** http://localhost:8080/swagger-ui/index.html
 
 ---
 
-## 📂 Estrutura de Pacotes
+##  Estrutura de Pacotes
 
 - `config`: Configurações globais (CORS, Internacionalização).
 - `controller`: Porta de entrada da API (Endpoints REST).
@@ -63,14 +63,14 @@ A API possui documentação interativa completa. Para visualizar todos os endpoi
 
 ---
 
-## 🧪 Testes Automatizados
+##  Testes Automatizados
 
 Para rodar a bateria de testes e garantir que tudo está funcionando corretamente:
 > mvn test
 
 ---
 
-## 📊 Informações Técnicas
+##  Informações Técnicas
 
 - **Porta Padrão:** 8080
 - **Versão Java:** 21
