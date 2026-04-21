@@ -1,6 +1,5 @@
-package io.github.dilluter.controller;
+package io.github.dilluter.exception;
 
-import io.github.dilluter.exception.ApiErrors;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -18,7 +17,7 @@ import java.util.stream.Collectors;
 
 @RestControllerAdvice
 @ControllerAdvice
-public class ApplicationControllerAdvice {
+public class ExceptionHandlerController {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)

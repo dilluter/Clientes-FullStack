@@ -1,4 +1,4 @@
-package util;
+package io.github.dilluter.util;
 
 import org.springframework.stereotype.Component;
 
