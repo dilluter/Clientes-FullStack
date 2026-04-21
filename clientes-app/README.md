@@ -75,10 +75,10 @@ ng test
 
 Angular CLI: 9.1.1  
 Node: 16.20.2  
-OS: win32 x64  
+OS: win32 x64
 
 Angular: 9.1.1  
-Ivy Workspace: Yes  
+Ivy Workspace: Yes
 
 Pacotes:  
 @angular-devkit/architect         0.901.1  
@@ -90,7 +90,7 @@ Pacotes:
 @ngtools/webpack                  9.1.1  
 rxjs                              6.5.5  
 typescript                        3.8.3  
-webpack                           4.42.0  
+webpack                           4.42.0
 
 ---
 
