@@ -13,6 +13,10 @@ export class LoginComponent implements OnInit {
 
   constructor() { }
 
+  onSubmit(){
+    console.log(`User: ${this.username} - Pass: ${this.password}`);
+  }
+
   ngOnInit(): void {
   }
 
