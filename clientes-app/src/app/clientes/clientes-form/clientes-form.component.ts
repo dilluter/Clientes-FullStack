@@ -56,7 +56,7 @@ export class ClientesFormComponent implements OnInit {
             this.cliente = response;
 
             setTimeout(() => {
-              this.router.navigate(['/clientes-lista']);
+              this.router.navigate(['/clientes/lista']);
             }, 800);
           },
           errorResponse => {
@@ -78,7 +78,7 @@ export class ClientesFormComponent implements OnInit {
         this.cliente = response;
 
         setTimeout(() => {
-          this.router.navigate(['/clientes-lista']);
+          this.router.navigate(['/clientes/lista']);
         }, 800);
       },
       errorResponse => {
@@ -95,6 +95,6 @@ export class ClientesFormComponent implements OnInit {
   }
 
   voltar() {
-    this.router.navigate(['/clientes-lista']);
+    this.router.navigate(['/clientes/lista']);
   }
 }
