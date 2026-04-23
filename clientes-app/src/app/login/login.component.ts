@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -8,27 +9,63 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent implements OnInit {
 
-  username: string;
-   password: string;
-   loginError: boolean;
-  cadastrando: boolean;
+  username = '';
+  password = '';
+  email = '';
+  nomeCompleto = '';
+  telefone = '';
+  loginError = false;
+  cadastrando = false;
 
   constructor(
-    private router: Router
-  ) { }
+    private router: Router,
+    private authService: AuthService
+  ) {}
 
-  onSubmit(){
-   this.router.navigate(['/home']);
+  ngOnInit(): void {}
+
+  onSubmit() {
+    this.loginError = false;
+    this.authService.login(this.username, this.password).subscribe({
+      next: () => this.router.navigate(['/home']),
+      error: () => this.loginError = true
+    });
   }
-  preparaCadastrar(event){
+
+  onCadastrar() {
+    this.authService.cadastrar({
+      username: this.username,
+      password: this.password,
+      email: this.email,
+      nomeCompleto: this.nomeCompleto,
+      telefone: this.telefone
+    }).subscribe({
+      next: () => {
+        this.cadastrando = false;
+        this.limparCampos();
+        alert('Cadastro realizado! Faça o login.');
+      },
+      error: (err: any) => alert(err.error?.message || 'Erro ao cadastrar.')
+    });
+  }
+
+  preparaCadastrar(event: Event) {
     event.preventDefault();
     this.cadastrando = true;
+    this.loginError = false;
+    this.limparCampos();
   }
-  cancelarCadastrar(){
+
+  cancelarCadastrar() {
     this.cadastrando = false;
+    this.limparCampos();
   }
 
-  ngOnInit(): void {
+  private limparCampos() {
+    this.username = '';
+    this.password = '';
+    this.email = '';
+    this.nomeCompleto = '';
+    this.telefone = '';
   }
-
 }

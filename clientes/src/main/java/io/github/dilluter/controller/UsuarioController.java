@@ -1,21 +1,22 @@
 package io.github.dilluter.controller;
 
-import io.github.dilluter.model.entity.Usuario;
-import io.github.dilluter.model.repository.UsuarioRepository;
+import io.github.dilluter.dto.UsuarioCadastroDTO;
+import io.github.dilluter.Service.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/usuarios")
+@RequestMapping("/usuarios")
 @RequiredArgsConstructor
 public class UsuarioController {
 
-    private final UsuarioRepository usuarioRepository;
+    private final UsuarioService usuarioService;
 
     @PostMapping
-    @ResponseStatus(org.springframework.http.HttpStatus.CREATED)
-    public void salvar(@RequestBody @Valid Usuario usuario) {
-        usuarioRepository.save(usuario);
+    @ResponseStatus(HttpStatus.CREATED)
+    public void cadastrar(@Valid @RequestBody UsuarioCadastroDTO dto) {
+        usuarioService.cadastrar(dto);
     }
 }
