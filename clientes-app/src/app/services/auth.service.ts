@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
@@ -11,17 +11,7 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   login(username: string, password: string): Observable<any> {
-    const body = new URLSearchParams();
-    body.set('username', username);
-    body.set('password', password);
-    body.set('grant_type', 'password');
-
-    return this.http.post<any>(`${this.apiUrl}/oauth/token`, body.toString(), {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/x-www-form-urlencoded',
-        Authorization: 'Basic ' + btoa('meu-client:meu-secret')
-      })
-    }).pipe(
+    return this.http.post<any>(`${this.apiUrl}/auth/login`, { username, password }).pipe(
       tap((response: any) => localStorage.setItem('token', response.access_token))
     );
   }
