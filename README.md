@@ -55,7 +55,7 @@ O projeto é dividido em duas pastas principais: o back-end (API) e o front-end 
 ### Passo 1: Clonar o Repositório
 
 Abra o seu terminal e execute:
-> git clone https://github.com/dilluter/Clientes-FullStack.git
+> git clone https://github.com/IgorBrunoAndradeDeBarros/Clientes-FullStack.git
 
 Após o clone, entre na pasta principal do projeto:
 > cd Clientes-FullStack
