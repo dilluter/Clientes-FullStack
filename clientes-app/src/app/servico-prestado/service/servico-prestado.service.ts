@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpParams} from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import {ServicoPrestado} from '../servicoPrestado';
-import {Observable} from 'rxjs';
-import {environment} from '../../../environments/environment';
-import { ServicoPrestadoBusca } from '../servico-prestado-lista/servicoPrestadoBusca';
+import {ServicoPrestadoBusca} from '../servico-prestado-lista/servicoPrestadoBusca';
+import {PageResponse} from '../../models/page-response';
 
 @Injectable({
   providedIn: 'root'
@@ -12,26 +13,28 @@ export class ServicoPrestadoService {
 
   private readonly apiUrl = `${environment.apiUrlBase}/servicos-prestados`;
 
-  constructor(private http: HttpClient) { }
+  constructor(private readonly http: HttpClient) {}
 
-  salvar(servicoPrestado: ServicoPrestado): Observable<ServicoPrestado> {
-    return this.http.post<ServicoPrestado>(this.apiUrl, servicoPrestado);
+  salvar(servicoPrestado: ServicoPrestado): Observable<ServicoPrestadoBusca> {
+    return this.http.post<ServicoPrestadoBusca>(this.apiUrl, servicoPrestado);
   }
-  buscar(nome: string, mes: number): Observable<ServicoPrestadoBusca[]> {
 
-    let httpParams = new HttpParams();
+  buscar(
+    nome = '',
+    mes?: number,
+    page = 0,
+    size = 10
+  ): Observable<PageResponse<ServicoPrestadoBusca>> {
+    let params = new HttpParams()
+      .set('nome', nome)
+      .set('page', page.toString())
+      .set('size', size.toString())
+      .set('sort', 'data,desc');
 
-    if (!nome) {
-      nome = '';
+    if (mes) {
+      params = params.set('mes', mes.toString());
     }
 
-    httpParams = httpParams.set('nome', nome);
-
-    if (mes !== null ) {
-      httpParams = httpParams.set('mes', mes.toString());
-    }
-    return this.http.get<ServicoPrestadoBusca[]>(this.apiUrl, {
-      params: httpParams
-    });
+    return this.http.get<PageResponse<ServicoPrestadoBusca>>(this.apiUrl, { params });
   }
 }

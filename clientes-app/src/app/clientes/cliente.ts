@@ -1,6 +1,6 @@
-export class Cliente {
-  id: number;
+export interface Cliente {
+  id?: number;
   nome: string;
   cpf: string;
-  dataDeCadastro: string;
+  dataDeCadastro?: string;
 }

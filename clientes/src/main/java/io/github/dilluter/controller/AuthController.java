@@ -1,14 +1,15 @@
 package io.github.dilluter.controller;
 
-import io.github.dilluter.Service.TokenService;
-import io.github.dilluter.Service.UsuarioService;
+import io.github.dilluter.dto.login.request.LoginRequestDTO;
+import io.github.dilluter.dto.login.response.LoginResponseDTO;
 import io.github.dilluter.model.entity.Usuario;
+import io.github.dilluter.service.TokenService;
+import io.github.dilluter.service.UsuarioService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -20,17 +21,14 @@ public class AuthController {
     private final TokenService tokenService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Map<String, String> body) {
-        String username = body.get("username");
-        String password = body.get("password");
+    public LoginResponseDTO login(@RequestBody @Valid LoginRequestDTO dto) {
+        Usuario usuario = usuarioService.buscarPorUsername(dto.getUsername());
 
-        Usuario usuario = usuarioService.buscarPorUsername(username);
-
-        if (!passwordEncoder.matches(password, usuario.getPassword())) {
-            return ResponseEntity.status(401).body("Senha incorreta");
+        if (!passwordEncoder.matches(dto.getPassword(), usuario.getPassword())) {
+            throw new BadCredentialsException("Senha inválida");
         }
 
         String token = tokenService.gerarToken(usuario);
-        return ResponseEntity.ok(Map.of("access_token", token));
+        return new LoginResponseDTO(token, "Bearer");
     }
 }

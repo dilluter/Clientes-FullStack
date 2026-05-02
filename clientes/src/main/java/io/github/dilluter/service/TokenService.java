@@ -1,4 +1,4 @@
-package io.github.dilluter.Service;
+package io.github.dilluter.service;
 
 import io.github.dilluter.model.entity.Usuario;
 import org.springframework.beans.factory.annotation.Value;

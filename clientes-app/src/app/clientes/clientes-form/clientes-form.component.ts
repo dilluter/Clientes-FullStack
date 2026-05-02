@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Cliente } from '../cliente';
 import { ClientesService } from '../service/clientes.service';
-import { Router, ActivatedRoute } from '@angular/router';
-import { Location } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ErrorUtil } from '../../utils/error.util';
 
 @Component({
   selector: 'app-clientes-form',
@@ -11,90 +12,102 @@ import { Location } from '@angular/common';
 })
 export class ClientesFormComponent implements OnInit {
 
-  cliente: Cliente;
-  success: boolean = false;
+  cliente: Cliente = this.criarClienteVazio();
+  success = false;
   errors: string[] = [];
-  id: number;
+  id?: number;
 
   constructor(
-    private service: ClientesService,
-    private router: Router,
-    private activatedRoute: ActivatedRoute,
-    private location: Location
-  ) {
-    this.cliente = new Cliente();
-  }
+    private readonly service: ClientesService,
+    private readonly router: Router,
+    private readonly activatedRoute: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
-    const idParam = this.activatedRoute.snapshot.params['id'];
+    const idParam = this.activatedRoute.snapshot.paramMap.get('id');
 
-    if (idParam) {
-      this.id = idParam;
-      this.service
-        .getClientesById(this.id)
-        .subscribe(
-          response => this.cliente = response,
-          () => {
-            this.cliente = new Cliente();
-            this.errors = ['Erro ao carregar o cliente.'];
-          }
-        );
+    if (!idParam) {
+      return;
     }
+
+    const idConvertido = Number(idParam);
+
+    if (Number.isNaN(idConvertido)) {
+      this.errors = ['ID do cliente inválido.'];
+      return;
+    }
+
+    this.id = idConvertido;
+    this.carregarCliente(idConvertido);
   }
 
-  onSubmit() {
+  onSubmit(): void {
     this.success = false;
     this.errors = [];
 
     if (this.id) {
-      this.service
-        .atualizar(this.cliente)
-        .subscribe(
-          response => {
-            this.success = true;
-            this.errors = [];
-            this.cliente = response;
-
-            setTimeout(() => {
-              this.router.navigate(['/clientes/lista']);
-            }, 800);
-          },
-          errorResponse => {
-            if (errorResponse.status === 400 &&
-              errorResponse.error?.error === 'Já existe um cliente com esse CPF.') {
-              this.errors = ['Já existe um cliente com esse CPF.'];
-            } else {
-              this.errors = ['Erro ao atualizar o cliente.'];
-            }
-          }
-        );
+      this.atualizarCliente();
       return;
     }
 
-    this.service.salvar(this.cliente).subscribe(
-      response => {
-        this.success = true;
-        this.errors = [];
-        this.cliente = response;
-
-        setTimeout(() => {
-          this.router.navigate(['/clientes/lista']);
-        }, 800);
-      },
-      errorResponse => {
-        if (errorResponse.status === 400 &&
-          errorResponse.error?.error === 'Já existe um cliente com esse CPF.') {
-          this.errors = ['Já existe um cliente com esse CPF.'];
-        } else if (errorResponse.error?.errors) {
-          this.errors = errorResponse.error.errors;
-        } else {
-          this.errors = ['Erro ao salvar o cliente.'];
-        }
-      }
-    );
+    this.salvarCliente();
   }
 
-  voltar() {
+  voltar(): void {
     this.router.navigate(['/clientes/lista']);
+  }
+
+  private carregarCliente(id: number): void {
+    this.service.getClientesById(id).subscribe({
+      next: response => {
+        this.cliente = response;
+      },
+      error: (errorResponse: HttpErrorResponse) => {
+        this.cliente = this.criarClienteVazio();
+        this.errors = ErrorUtil.getErrors(errorResponse, 'Erro ao carregar o cliente.');
+      }
+    });
+  }
+
+  private salvarCliente(): void {
+    this.service.salvar(this.cliente).subscribe({
+      next: response => {
+        this.cliente = response;
+        this.redirecionarComSucesso();
+      },
+      error: (errorResponse: HttpErrorResponse) => {
+        this.success = false;
+        this.errors = ErrorUtil.getErrors(errorResponse, 'Erro ao salvar o cliente.');
+      }
+    });
+  }
+
+  private atualizarCliente(): void {
+    this.service.atualizar(this.cliente).subscribe({
+      next: response => {
+        this.cliente = response;
+        this.redirecionarComSucesso();
+      },
+      error: (errorResponse: HttpErrorResponse) => {
+        this.success = false;
+        this.errors = ErrorUtil.getErrors(errorResponse, 'Erro ao atualizar o cliente.');
+      }
+    });
+  }
+
+  private redirecionarComSucesso(): void {
+    this.success = true;
+    this.errors = [];
+
+    window.setTimeout(() => {
+      this.router.navigate(['/clientes/lista']);
+    }, 800);
+  }
+
+  private criarClienteVazio(): Cliente {
+    return {
+      nome: '',
+      cpf: ''
+    };
   }
 }

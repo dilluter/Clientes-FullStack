@@ -1,12 +1,15 @@
 package io.github.dilluter.model.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 @Entity
 @Table(name = "usuarios")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -21,7 +24,7 @@ public class Usuario {
     private String username;
 
     @NotBlank
-    @Column(nullable = false, length = 150, unique = true)
+    @Column(nullable = false, length = 150)
     private String password;
 
     @NotBlank
@@ -34,6 +37,6 @@ public class Usuario {
     private String nomeCompleto;
 
     @Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "Telefone inválido")
-    @Column
+    @Column(length = 15)
     private String telefone;
 }

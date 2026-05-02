@@ -1,7 +1,7 @@
 package io.github.dilluter.controller;
 
 import io.github.dilluter.dto.UsuarioCadastroDTO;
-import io.github.dilluter.Service.UsuarioService;
+import io.github.dilluter.service.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
