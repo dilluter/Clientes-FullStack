@@ -1,77 +1,175 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ClienteslistaComponent } from '../../clientes/clientes-lista/clientes-lista.component';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { ClientesService } from '../../clientes/service/clientes.service';
+import { ServicoPrestadoListaComponent } from './servico-prestado-lista.component';
+import { ServicoPrestadoService } from '../service/servico-prestado.service';
 import { of, throwError } from 'rxjs';
-import { Cliente } from '../../clientes/cliente';
+import { HttpErrorResponse } from '@angular/common/http';
 
-describe('ClienteslistaComponent', () => {
-  let component: ClienteslistaComponent;
-  let fixture: ComponentFixture<ClienteslistaComponent>;
-  let clientesService: ClientesService;
+describe('ServicoPrestadoListaComponent', () => {
+  let component: ServicoPrestadoListaComponent;
+  let fixture: ComponentFixture<ServicoPrestadoListaComponent>;
+  let service: jasmine.SpyObj<ServicoPrestadoService>;
 
   beforeEach(async () => {
+    service = jasmine.createSpyObj<ServicoPrestadoService>('ServicoPrestadoService', [
+      'buscar'
+    ]);
+
     await TestBed.configureTestingModule({
-      declarations: [ ClienteslistaComponent ],
-      imports: [ HttpClientTestingModule ],
-      providers: [ ClientesService ]
-    })
-    .compileComponents();
-  });
+      declarations: [ServicoPrestadoListaComponent],
+      providers: [
+        { provide: ServicoPrestadoService, useValue: service }
+      ]
+    }).overrideComponent(ServicoPrestadoListaComponent, {
+      set: { template: '' }
+    }).compileComponents();
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(ClienteslistaComponent);
+    fixture = TestBed.createComponent(ServicoPrestadoListaComponent);
     component = fixture.componentInstance;
-    clientesService = TestBed.inject(ClientesService);
-
-    spyOn(clientesService, 'getClientes').and.returnValue(of([]));
-    fixture.detectChanges();
   });
 
   it('deve criar o componente', () => {
     expect(component).toBeTruthy();
   });
 
-  it('deve carregar a lista de clientes no ngOnInit', () => {
-    const mockClientes = [
-      { id: 1, nome: 'Carlos', cpf: '00011122233', dataCadastro: '12/12/2022' }
-    ] as unknown as Cliente[];
+  it('deve consultar serviços prestados', () => {
+    service.buscar.and.returnValue(of({
+      content: [
+        {
+          id: 1,
+          descricao: 'Serviço teste',
+          nomeCliente: 'Igor',
+          data: '2030-01-01',
+          valor: 100
+        }
+      ],
+      number: 0,
+      totalPages: 1,
+      totalElements: 1
+    } as any));
 
-    clientesService.getClientes = jasmine.createSpy().and.returnValue(of(mockClientes));
+    component.nome = 'Igor';
+    component.mes = 1;
 
-    component.carregarClientes();
+    component.consultar();
 
-    expect(component.clientes).toEqual(mockClientes);
+    expect(service.buscar).toHaveBeenCalledWith('Igor', 1, 0, 10);
+    expect(component.lista.length).toBe(1);
+    expect(component.paginaAtual).toBe(0);
+    expect(component.totalPaginas).toBe(1);
+    expect(component.totalElementos).toBe(1);
+    expect(component.message).toBe('');
   });
 
-  it('deve preparar cliente para deleção', () => {
-    const mockCliente = { id: 1, nome: 'Carlos', cpf: '00011122233', dataCadastro: '12/12/2022' } as unknown as Cliente;
-    component.preparaDelecao(mockCliente);
-    expect(component.clienteSelecionado).toEqual(mockCliente);
+  it('deve exibir mensagem quando consulta não retornar resultados', () => {
+    service.buscar.and.returnValue(of({
+      content: [],
+      number: 0,
+      totalPages: 0,
+      totalElements: 0
+    } as any));
+
+    component.consultar();
+
+    expect(component.lista).toEqual([]);
+    expect(component.message).toBe('Nenhum resultado encontrado.');
   });
 
-  it('deve deletar cliente com sucesso e remover da lista', () => {
-    const mockCliente = { id: 1, nome: 'Carlos', cpf: '00011122233', dataCadastro: '12/12/2022' } as unknown as Cliente;
-    component.clientes = [mockCliente];
-    component.clienteSelecionado = mockCliente;
+  it('deve exibir erro ao falhar na consulta', () => {
+    const error = new HttpErrorResponse({
+      error: { errors: ['Erro ao consultar'] },
+      status: 500
+    });
 
-    spyOn(clientesService, 'delete').and.returnValue(of(null));
+    service.buscar.and.returnValue(throwError(() => error));
 
-    component.confirmarDelecao();
+    component.consultar();
 
-    expect(clientesService.delete).toHaveBeenCalledWith(mockCliente);
-    expect(component.clientes.length).toBe(0);
-    expect(component.clienteSelecionado).toBeNull();
-    expect(component.success).toBeTrue();
+    expect(component.errors.length).toBeGreaterThan(0);
   });
 
-  it('deve tratar erro ao tentar deletar cliente', () => {
-    component.clienteSelecionado = { id: 1, nome: 'Carlos', cpf: '00011122233', dataCadastro: '12/12/2022' } as unknown as Cliente;
-    spyOn(clientesService, 'delete').and.returnValue(throwError(() => new Error('Erro')));
+  it('deve limpar filtros', () => {
+    component.nome = 'Igor';
+    component.mes = 1;
+    component.lista = [
+      {
+        id: 1,
+        descricao: 'Serviço',
+        nomeCliente: 'Igor',
+        data: '2030-01-01',
+        valor: 100
+      } as any
+    ];
+    component.message = 'Mensagem';
+    component.errors = ['Erro'];
+    component.paginaAtual = 2;
+    component.totalPaginas = 3;
+    component.totalElementos = 30;
 
-    component.confirmarDelecao();
+    component.limparFiltros();
 
-    expect(component.success).toBeFalse();
-    expect(component.errors).toContain('Erro ao deletar o cliente.');
+    expect(component.nome).toBe('');
+    expect(component.mes).toBeUndefined();
+    expect(component.lista).toEqual([]);
+    expect(component.message).toBe('');
+    expect(component.errors).toEqual([]);
+    expect(component.paginaAtual).toBe(0);
+    expect(component.totalPaginas).toBe(0);
+    expect(component.totalElementos).toBe(0);
+  });
+
+  it('deve ir para página anterior quando possível', () => {
+    spyOn(component, 'consultar');
+
+    component.paginaAtual = 2;
+
+    component.paginaAnterior();
+
+    expect(component.consultar).toHaveBeenCalledWith(1);
+  });
+
+  it('não deve ir para página anterior quando estiver na primeira página', () => {
+    spyOn(component, 'consultar');
+
+    component.paginaAtual = 0;
+
+    component.paginaAnterior();
+
+    expect(component.consultar).not.toHaveBeenCalled();
+  });
+
+  it('deve ir para próxima página quando possível', () => {
+    spyOn(component, 'consultar');
+
+    component.paginaAtual = 0;
+    component.totalPaginas = 2;
+
+    component.proximaPagina();
+
+    expect(component.consultar).toHaveBeenCalledWith(1);
+  });
+
+  it('não deve ir para próxima página quando estiver na última página', () => {
+    spyOn(component, 'consultar');
+
+    component.paginaAtual = 1;
+    component.totalPaginas = 2;
+
+    component.proximaPagina();
+
+    expect(component.consultar).not.toHaveBeenCalled();
+  });
+
+  it('deve retornar true quando possuir resultados', () => {
+    component.lista = [
+      {
+        id: 1,
+        descricao: 'Serviço',
+        nomeCliente: 'Igor',
+        data: '2030-01-01',
+        valor: 100
+      } as any
+    ];
+
+    expect(component.possuiResultados).toBeTrue();
   });
 });

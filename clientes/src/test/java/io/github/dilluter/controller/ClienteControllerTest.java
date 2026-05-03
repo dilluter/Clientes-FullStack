@@ -1,213 +1,93 @@
 package io.github.dilluter.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.dilluter.exception.ExceptionHandlerController;
-import io.github.dilluter.model.entity.Cliente;
-import io.github.dilluter.model.repository.ClienteRepository;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import io.github.dilluter.dto.cliente.request.ClienteCreateDTO;
+import io.github.dilluter.dto.cliente.request.ClienteUpdateDTO;
+import io.github.dilluter.dto.cliente.response.ClienteResponseDTO;
+import io.github.dilluter.service.ClienteService;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
-import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ClienteControllerTest {
-
-    private MockMvc mockMvc;
+@ExtendWith(org.mockito.junit.jupiter.MockitoExtension.class)
+class ClienteControllerTest {
 
     @Mock
-    private ClienteRepository repository;
+    private ClienteService clienteService;
 
     @InjectMocks
     private ClienteController clienteController;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    @Test
+    void deveListarTodosClientes() {
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<ClienteResponseDTO> pageMock = Page.empty(pageable);
 
-    @Before
-    public void setUp() {
-        mockMvc = MockMvcBuilders
-                .standaloneSetup(clienteController)
-                .setControllerAdvice(new ExceptionHandlerController())
-                .build();
-    }
+        when(clienteService.listarTodos(pageable)).thenReturn(pageMock);
 
-    private Cliente criarCliente(Integer id, String nome, String cpf) {
-        Cliente cliente = new Cliente();
-        cliente.setId(id);
-        cliente.setNome(nome);
-        cliente.setCpf(cpf);
-        return cliente;
+        Page<ClienteResponseDTO> resultado = clienteController.listarTodos(pageable);
+
+        assertSame(pageMock, resultado);
+        verify(clienteService).listarTodos(pageable);
+        verifyNoMoreInteractions(clienteService);
     }
 
     @Test
-    public void obterTodos_deveRetornarListaDeClientes() throws Exception {
-        List<Cliente> clientes = Arrays.asList(
-                criarCliente(1, "João Silva",  "529.982.247-25"),
-                criarCliente(2, "Maria Souza", "071.432.470-75")
-        );
-        when(repository.findAll()).thenReturn(clientes);
+    void deveBuscarClientePorId() {
+        Integer id = 1;
+        ClienteResponseDTO responseDTO = mock(ClienteResponseDTO.class);
 
-        mockMvc.perform(get("/api/clientes"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].nome", is("João Silva")))
-                .andExpect(jsonPath("$[1].nome", is("Maria Souza")));
+        when(clienteService.buscarPorId(id)).thenReturn(responseDTO);
 
-        verify(repository, times(1)).findAll();
+        ClienteResponseDTO resultado = clienteController.buscarPorId(id);
+
+        assertSame(responseDTO, resultado);
+        verify(clienteService).buscarPorId(id);
+        verifyNoMoreInteractions(clienteService);
     }
 
     @Test
-    public void obterTodos_deveRetornarListaVaziaQuandoNaoHaClientes() throws Exception {
-        when(repository.findAll()).thenReturn(Collections.emptyList());
+    void deveSalvarCliente() {
+        ClienteCreateDTO createDTO = mock(ClienteCreateDTO.class);
+        ClienteResponseDTO responseDTO = mock(ClienteResponseDTO.class);
 
-        mockMvc.perform(get("/api/clientes"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(0)));
+        when(clienteService.salvar(createDTO)).thenReturn(responseDTO);
 
-        verify(repository, times(1)).findAll();
+        ClienteResponseDTO resultado = clienteController.salvar(createDTO);
+
+        assertSame(responseDTO, resultado);
+        verify(clienteService).salvar(createDTO);
+        verifyNoMoreInteractions(clienteService);
     }
 
     @Test
-    public void buscarPorId_deveRetornarClienteQuandoEncontrado() throws Exception {
-        Cliente cliente = criarCliente(1, "João Silva", "529.982.247-25");
-        when(repository.findById(1)).thenReturn(Optional.of(cliente));
+    void deveAtualizarCliente() {
+        Integer id = 1;
+        ClienteUpdateDTO updateDTO = mock(ClienteUpdateDTO.class);
+        ClienteResponseDTO responseDTO = mock(ClienteResponseDTO.class);
 
-        mockMvc.perform(get("/api/clientes/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id",   is(1)))
-                .andExpect(jsonPath("$.nome", is("João Silva")));
+        when(clienteService.atualizar(id, updateDTO)).thenReturn(responseDTO);
 
-        verify(repository, times(1)).findById(1);
+        ClienteResponseDTO resultado = clienteController.atualizar(id, updateDTO);
+
+        assertSame(responseDTO, resultado);
+        verify(clienteService).atualizar(id, updateDTO);
+        verifyNoMoreInteractions(clienteService);
     }
 
     @Test
-    public void buscarPorId_deveRetornar404QuandoClienteNaoEncontrado() throws Exception {
-        when(repository.findById(anyInt())).thenReturn(Optional.empty());
+    void deveDeletarCliente() {
+        Integer id = 1;
 
-        mockMvc.perform(get("/api/clientes/99"))
-                .andExpect(status().isNotFound());
+        clienteController.deletar(id);
 
-        verify(repository, times(1)).findById(99);
-    }
-
-    @Test
-    public void salvar_deveRetornar201EClienteSalvo() throws Exception {
-        Cliente clienteInput = criarCliente(null, "João Silva", "529.982.247-25");
-        Cliente clienteSalvo  = criarCliente(1,    "João Silva", "529.982.247-25");
-
-        when(repository.save(any(Cliente.class))).thenReturn(clienteSalvo);
-
-        mockMvc.perform(post("/api/clientes")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(clienteInput)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id",   is(1)))
-                .andExpect(jsonPath("$.nome", is("João Silva")));
-
-        verify(repository, times(1)).save(any(Cliente.class));
-    }
-
-    @Test
-    public void salvar_deveRetornar400QuandoValidacaoFalha() throws Exception {
-
-        Cliente clienteInvalido = criarCliente(null, "João Silva", null);
-
-        mockMvc.perform(post("/api/clientes")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(clienteInvalido)))
-                .andExpect(status().isBadRequest());
-
-        verify(repository, never()).save(any(Cliente.class));
-    }
-
-    @Test
-    public void salvar_deveRetornar400QuandoCpfJaExistenteNoBanco() throws Exception {
-        Cliente clienteInput = criarCliente(null, "João Silva", "529.982.247-25");
-
-        when(repository.save(any(Cliente.class)))
-                .thenThrow(new DataIntegrityViolationException("duplicate key value"));
-
-        mockMvc.perform(post("/api/clientes")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(clienteInput)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.errors[0]",
-                        is("Já existe um cliente com esse CPF.")));
-
-        verify(repository, times(1)).save(any(Cliente.class));
-    }
-
-    @Test
-    public void atualizar_deveRetornar204QuandoClienteAtualizado() throws Exception {
-        Cliente clienteExistente  = criarCliente(1, "João Silva",  "529.982.247-25");
-        Cliente clienteAtualizado = criarCliente(1, "João Editado","529.982.247-25");
-
-        when(repository.findById(1)).thenReturn(Optional.of(clienteExistente));
-        when(repository.save(any(Cliente.class))).thenReturn(clienteAtualizado);
-
-        mockMvc.perform(put("/api/clientes/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(clienteAtualizado)))
-                .andExpect(status().isNoContent());
-
-        verify(repository, times(1)).findById(1);
-        verify(repository, times(1)).save(any(Cliente.class));
-    }
-
-    @Test
-    public void atualizar_deveRetornar404QuandoClienteNaoExistente() throws Exception {
-
-        Cliente clienteAtualizado = criarCliente(null, "João Editado", "529.982.247-25");
-
-        when(repository.findById(anyInt())).thenReturn(Optional.empty());
-
-        mockMvc.perform(put("/api/clientes/99")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(clienteAtualizado)))
-                .andExpect(status().isNotFound());
-
-        verify(repository, times(1)).findById(99);
-        verify(repository, never()).save(any(Cliente.class));
-    }
-
-    @Test
-    public void deletarPorId_deveRetornar204QuandoDeletadoComSucesso() throws Exception {
-        Cliente cliente = criarCliente(1, "João Silva", "529.982.247-25");
-        when(repository.findById(1)).thenReturn(Optional.of(cliente));
-        doNothing().when(repository).delete(any(Cliente.class));
-
-        mockMvc.perform(delete("/api/clientes/1"))
-                .andExpect(status().isNoContent());
-
-        verify(repository, times(1)).findById(1);
-        verify(repository, times(1)).delete(cliente);
-    }
-
-    @Test
-    public void deletarPorId_deveRetornar404QuandoClienteNaoEncontrado() throws Exception {
-        when(repository.findById(anyInt())).thenReturn(Optional.empty());
-
-        mockMvc.perform(delete("/api/clientes/99"))
-                .andExpect(status().isNotFound());
-
-        verify(repository, times(1)).findById(99);
-        verify(repository, never()).delete(any(Cliente.class));
+        verify(clienteService).deletar(id);
+        verifyNoMoreInteractions(clienteService);
     }
 }

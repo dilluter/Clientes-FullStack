@@ -1,30 +1,39 @@
 package io.github.dilluter.model.entity;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
 import java.time.LocalDate;
 
-public class ClienteTest {
+import static org.junit.jupiter.api.Assertions.*;
+
+class ClienteTest {
 
     @Test
-    public void deveTestarGettersESettersDoCliente() {
-        Cliente cliente = new Cliente();
-        cliente.setId(1);
-        cliente.setNome("João Silva");
-        cliente.setCpf("12345678901");
+    void deveDefinirDataDeCadastroAoPersistir() {
+        Cliente cliente = Cliente.builder()
+                .nome("Igor")
+                .cpf("52998224725")
+                .build();
 
-        Assert.assertEquals(Integer.valueOf(1), cliente.getId());
-        Assert.assertEquals("João Silva", cliente.getNome());
-        Assert.assertEquals("12345678901", cliente.getCpf());
-    }
-
-    @Test
-    public void deveDefinirDataCadastroNoPrePersist() {
-        Cliente cliente = new Cliente();
+        assertNull(cliente.getDataDeCadastro());
 
         cliente.prePersist();
 
-        Assert.assertNotNull(cliente.getDataDeCadastro());
-        Assert.assertEquals(LocalDate.now(), cliente.getDataDeCadastro());
+        assertEquals(LocalDate.now(), cliente.getDataDeCadastro());
+    }
+
+    @Test
+    void deveCriarClienteComBuilder() {
+        Cliente cliente = Cliente.builder()
+                .id(1)
+                .nome("Igor Bruno")
+                .cpf("52998224725")
+                .dataDeCadastro(LocalDate.of(2026, 5, 3))
+                .build();
+
+        assertEquals(1, cliente.getId());
+        assertEquals("Igor Bruno", cliente.getNome());
+        assertEquals("52998224725", cliente.getCpf());
+        assertEquals(LocalDate.of(2026, 5, 3), cliente.getDataDeCadastro());
     }
 }
