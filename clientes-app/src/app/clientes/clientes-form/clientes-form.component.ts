@@ -4,6 +4,7 @@ import { ClientesService } from '../service/clientes.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorUtil } from '../../utils/error.util';
+import {MaskUtil} from '../../utils/mask.util';
 
 @Component({
   selector: 'app-clientes-form',
@@ -68,9 +69,26 @@ export class ClientesFormComponent implements OnInit {
       }
     });
   }
+  onCpfChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+
+    const cpfFormatado = MaskUtil.cpf(input.value);
+
+    input.value = cpfFormatado;
+    this.cliente.cpf = cpfFormatado;
+  }
+
+  private normalizarClienteAntesDeEnviar(): Cliente {
+    return {
+      ...this.cliente,
+      cpf: MaskUtil.onlyNumbers(this.cliente.cpf)
+    };
+  }
 
   private salvarCliente(): void {
-    this.service.salvar(this.cliente).subscribe({
+    const clienteRequest = this.normalizarClienteAntesDeEnviar();
+
+    this.service.salvar(clienteRequest).subscribe({
       next: response => {
         this.cliente = response;
         this.redirecionarComSucesso();
@@ -83,7 +101,9 @@ export class ClientesFormComponent implements OnInit {
   }
 
   private atualizarCliente(): void {
-    this.service.atualizar(this.cliente).subscribe({
+    const clienteRequest = this.normalizarClienteAntesDeEnviar();
+
+    this.service.atualizar(clienteRequest).subscribe({
       next: response => {
         this.cliente = response;
         this.redirecionarComSucesso();

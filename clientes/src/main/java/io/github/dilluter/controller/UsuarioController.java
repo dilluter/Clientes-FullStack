@@ -1,6 +1,6 @@
 package io.github.dilluter.controller;
 
-import io.github.dilluter.dto.UsuarioCadastroDTO;
+import io.github.dilluter.dto.usuario.UsuarioCadastroDTO;
 import io.github.dilluter.service.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ public class UsuarioController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void cadastrar(@Valid @RequestBody UsuarioCadastroDTO dto) {
-        usuarioService.cadastrar(dto);
+    public void cadastrar(@Valid @RequestBody UsuarioCadastroDTO usuarioCadastroDTO) {
+        usuarioService.cadastrar(usuarioCadastroDTO);
     }
 }

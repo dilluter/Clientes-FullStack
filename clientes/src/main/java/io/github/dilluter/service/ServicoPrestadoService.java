@@ -20,12 +20,15 @@ import java.time.format.DateTimeParseException;
 public class ServicoPrestadoService {
 
     private static final DateTimeFormatter FORMATO_DATA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private static final LocalDate DATA_MINIMA_PERMITIDA = LocalDate.of(2000, 1, 1);
 
     private final ServicoPrestadoRepository servicoPrestadoRepository;
     private final ClienteService clienteService;
 
     public ServicoPrestadoResponseDTO salvar(ServicoPrestadoCreateDTO servicoPrestadoCreateDTO) {
         LocalDate data = converterData(servicoPrestadoCreateDTO.getData());
+
+        validarData(data);
 
         Cliente cliente = clienteService.buscarEntidadePorId(servicoPrestadoCreateDTO.getIdCliente());
 
@@ -44,7 +47,7 @@ public class ServicoPrestadoService {
     public Page<ServicoPrestadoResponseDTO> pesquisar(String nome, Integer mes, Pageable pageable) {
         validarMes(mes);
 
-        String nomeFiltro = "%" + (nome == null ? "" : nome) + "%";
+        String nomeFiltro = "%" + (nome == null ? "" : nome.trim()) + "%";
 
         return servicoPrestadoRepository
                 .buscarPorNomeClienteEMes(nomeFiltro, mes, pageable)
@@ -54,8 +57,14 @@ public class ServicoPrestadoService {
     private LocalDate converterData(String data) {
         try {
             return LocalDate.parse(data, FORMATO_DATA);
-        } catch (DateTimeParseException e) {
+        } catch (DateTimeParseException | NullPointerException e) {
             throw new BusinessException("Data inválida. Use o formato dd/MM/yyyy.");
+        }
+    }
+
+    private void validarData(LocalDate data) {
+        if (data.isBefore(DATA_MINIMA_PERMITIDA)) {
+            throw new BusinessException("A data não pode ser anterior a 01/01/2000.");
         }
     }
 

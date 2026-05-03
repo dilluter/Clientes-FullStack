@@ -65,6 +65,22 @@
                       required>
                   </div>
 
+                  <div class="form-group mb-3" *ngIf="cadastrando">
+                    <label class="small mb-1" for="confirmarEmail">Confirmar Email</label>
+                    <input
+                      id="confirmarEmail"
+                      type="email"
+                      name="confirmarEmail"
+                      [(ngModel)]="confirmarEmail"
+                      class="form-control py-4"
+                      placeholder="Confirme seu email"
+                      required>
+                  </div>
+
+                  <div class="text-danger small mb-3" *ngIf="emailsDiferentes()">
+                    Os emails informados não conferem.
+                  </div>
+
                   <div class="form-group mb-3">
                     <label class="small mb-1" for="password">Senha</label>
                     <input
@@ -79,6 +95,23 @@
                   </div>
 
                   <div class="form-group mb-3" *ngIf="cadastrando">
+                    <label class="small mb-1" for="confirmarPassword">Confirmar Senha</label>
+                    <input
+                      id="confirmarPassword"
+                      type="password"
+                      name="confirmarPassword"
+                      [(ngModel)]="confirmarPassword"
+                      class="form-control py-4"
+                      placeholder="Confirme sua senha"
+                      required
+                      minlength="6">
+                  </div>
+
+                  <div class="text-danger small mb-3" *ngIf="senhasDiferentes()">
+                    As senhas informadas não conferem.
+                  </div>
+
+                  <div class="form-group mb-3" *ngIf="cadastrando">
                     <label class="small mb-1" for="telefone">Telefone</label>
                     <input
                       id="telefone"
@@ -86,7 +119,9 @@
                       name="telefone"
                       [(ngModel)]="telefone"
                       class="form-control py-4"
-                      placeholder="Ex: 11999999999">
+                      placeholder="Ex: (61) 99999-9999"
+                      maxlength="15"
+                      (input)="onTelefoneChange($event)">
                   </div>
 
                   <div class="form-group d-flex align-items-center mt-4 mb-0 gap-2">
@@ -102,7 +137,7 @@
                       <button
                         type="submit"
                         class="btn btn-success"
-                        [disabled]="loginForm.invalid">
+                        [disabled]="loginForm.invalid || formularioCadastroInvalido()">
                         Cadastrar
                       </button>
 

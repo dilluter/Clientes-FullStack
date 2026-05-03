@@ -36,6 +36,18 @@ export class ServicoPrestadoFormComponent implements OnInit {
     this.success = false;
     this.errors = [];
 
+    if (!DateUtil.isValidDateBr(this.dataFormatada)) {
+      this.errors = ['Data inválida. Use o formato dd/MM/yyyy.'];
+      return;
+    }
+
+    if (DateUtil.isPastDate(this.dataFormatada)) {
+      this.errors = ['A data não pode ser anterior à data atual.'];
+      return;
+    }
+
+    this.servicoPrest.data = DateUtil.toBackend(this.dataFormatada);
+
     this.servicoPrestadoService.salvar(this.servicoPrest).subscribe({
       next: () => {
         this.success = true;

@@ -13,7 +13,9 @@ interface LoginResponse {
 export interface UsuarioCadastroRequest {
   username: string;
   password: string;
+  confirmarPassword: string;
   email: string;
+  confirmarEmail: string;
   nomeCompleto: string;
   telefone?: string;
 }

@@ -1,7 +1,12 @@
-package io.github.dilluter.dto;
+package io.github.dilluter.dto.usuario;
 
-import jakarta.validation.constraints.*;
-import lombok.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
@@ -15,9 +20,16 @@ public class UsuarioCadastroDTO {
     @Size(min = 6, message = "Senha deve ter no mínimo 6 caracteres")
     private String password;
 
+    @NotBlank(message = "Confirmação de senha obrigatória")
+    private String confirmarPassword;
+
     @NotBlank(message = "Email obrigatório")
     @Email(message = "Email inválido")
     private String email;
+
+    @NotBlank(message = "Confirmação de email obrigatória")
+    @Email(message = "Email de confirmação inválido")
+    private String confirmarEmail;
 
     @NotBlank(message = "Nome completo obrigatório")
     private String nomeCompleto;
