@@ -1,20 +1,18 @@
-package io.github.dilluter.dto;
+package io.github.dilluter.dto.servico.request;
 
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
 @Data
-@NoArgsConstructor
-public class ServicoPrestadoDTO {
+public class ServicoPrestadoCreateDTO {
 
-    @NotEmpty(message = "{campo.descricao.obrigatorio}")
+    @NotBlank(message = "{campo.descricao.obrigatorio}")
     private String descricao;
 
-    @NotEmpty(message = "{campo.data.obrigatorio}")
+    @NotBlank(message = "{campo.data.obrigatorio}")
     private String data;
 
     @NotNull(message = "{campo.cliente.obrigatorio}")

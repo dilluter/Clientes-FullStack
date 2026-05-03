@@ -1,6 +1,6 @@
-export class ServicoPrestado {
+export interface ServicoPrestado {
   descricao: string;
   data: string;
-  idCliente: number;
-  valor: number;
+  idCliente?: number;
+  valor?: number;
 }

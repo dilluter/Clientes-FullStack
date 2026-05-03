@@ -1,85 +1,237 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { ClientesFormComponent } from './clientes-form.component';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { RouterTestingModule } from '@angular/router/testing';
-import { FormsModule } from '@angular/forms';
 import { ClientesService } from '../service/clientes.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
-import { Cliente } from '../cliente';
 import { HttpErrorResponse } from '@angular/common/http';
 
 describe('ClientesFormComponent', () => {
   let component: ClientesFormComponent;
   let fixture: ComponentFixture<ClientesFormComponent>;
-  let clientesService: ClientesService;
-  let router: Router;
+  let service: jasmine.SpyObj<ClientesService>;
+  let router: jasmine.SpyObj<Router>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+  function configurarTeste(idParam: string | null = null): void {
+    service = jasmine.createSpyObj<ClientesService>('ClientesService', [
+      'getClientesById',
+      'salvar',
+      'atualizar'
+    ]);
+
+    router = jasmine.createSpyObj<Router>('Router', ['navigate']);
+
+    TestBed.configureTestingModule({
       declarations: [ClientesFormComponent],
-      imports: [
-        HttpClientTestingModule,
-        RouterTestingModule.withRoutes([{ path: 'clientes-lista', redirectTo: '' }]),
-        FormsModule
-      ],
       providers: [
-        ClientesService,
+        { provide: ClientesService, useValue: service },
+        { provide: Router, useValue: router },
         {
           provide: ActivatedRoute,
-          useValue: { snapshot: { params: { id: 1 } } }
+          useValue: {
+            snapshot: {
+              paramMap: {
+                get: () => idParam
+              }
+            }
+          }
         }
       ]
-    }).compileComponents();
-  });
+    }).overrideComponent(ClientesFormComponent, {
+      set: { template: '' }
+    });
 
-  beforeEach(() => {
     fixture = TestBed.createComponent(ClientesFormComponent);
     component = fixture.componentInstance;
-    clientesService = TestBed.inject(ClientesService);
-    router = TestBed.inject(Router);
-    fixture.detectChanges();
-  });
+  }
 
   it('deve criar o componente', () => {
+    configurarTeste();
+
     expect(component).toBeTruthy();
   });
 
-  it('deve carregar cliente se ID for passado na rota', () => {
-    const mockCliente = {
-      id: 1,
-      nome: 'Maria',
-      cpf: '11122233344',
-      dataCadastro: '01/01/2021'
-    } as unknown as Cliente;
+  it('deve iniciar com cliente vazio quando não houver id na rota', () => {
+    configurarTeste();
 
-    spyOn(clientesService, 'getClientesById').and.returnValue(of(mockCliente));
+    fixture.detectChanges();
 
-    component.ngOnInit();
-
-    expect(clientesService.getClientesById).toHaveBeenCalledWith(1);
-    expect(component.cliente).toEqual(mockCliente);
+    expect(component.cliente).toEqual({
+      nome: '',
+      cpf: ''
+    });
+    expect(service.getClientesById).not.toHaveBeenCalled();
   });
 
-  it('deve chamar atualizar ao dar onSubmit com ID presente', fakeAsync(() => {
-    const mockCliente = {
+  it('deve carregar cliente quando houver id válido na rota', () => {
+    configurarTeste('1');
+
+    const cliente = {
       id: 1,
-      nome: 'Maria',
-      cpf: '11122233344',
-      dataCadastro: '01/01/2021'
-    } as unknown as Cliente;
+      nome: 'Igor',
+      cpf: '12345678901'
+    };
 
-    component.cliente = mockCliente;
-    component.id = 1;
+    service.getClientesById.and.returnValue(of(cliente));
 
-    spyOn(clientesService, 'atualizar').and.returnValue(of(mockCliente));
-    spyOn(router, 'navigate');
+    fixture.detectChanges();
+
+    expect(component.id).toBe(1);
+    expect(service.getClientesById).toHaveBeenCalledWith(1);
+    expect(component.cliente).toEqual(cliente);
+  });
+
+  it('deve exibir erro quando id da rota for inválido', () => {
+    configurarTeste('abc');
+
+    fixture.detectChanges();
+
+    expect(component.errors).toEqual(['ID do cliente inválido.']);
+    expect(service.getClientesById).not.toHaveBeenCalled();
+  });
+
+  it('deve exibir erro quando falhar ao carregar cliente', () => {
+    configurarTeste('1');
+
+    const error = new HttpErrorResponse({
+      error: { errors: ['Cliente não encontrado.'] },
+      status: 404
+    });
+
+    service.getClientesById.and.returnValue(throwError(() => error));
+
+    fixture.detectChanges();
+
+    expect(component.cliente).toEqual({
+      nome: '',
+      cpf: ''
+    });
+    expect(component.errors.length).toBeGreaterThan(0);
+  });
+
+  it('deve salvar cliente novo removendo máscara do CPF', fakeAsync(() => {
+    configurarTeste();
+
+    const clienteSalvo = {
+      id: 1,
+      nome: 'Igor',
+      cpf: '12345678901'
+    };
+
+    component.cliente = {
+      nome: 'Igor',
+      cpf: '123.456.789-01'
+    };
+
+    service.salvar.and.returnValue(of(clienteSalvo));
 
     component.onSubmit();
+
+    expect(service.salvar).toHaveBeenCalledWith({
+      nome: 'Igor',
+      cpf: '12345678901'
+    });
 
     expect(component.success).toBeTrue();
 
     tick(800);
-    expect(router.navigate).toHaveBeenCalledWith(['/clientes-lista']);
+
+    expect(router.navigate).toHaveBeenCalledWith(['/clientes/lista']);
   }));
+
+  it('deve atualizar cliente existente removendo máscara do CPF', fakeAsync(() => {
+    configurarTeste();
+
+    const clienteAtualizado = {
+      id: 1,
+      nome: 'Igor Atualizado',
+      cpf: '12345678901'
+    };
+
+    component.id = 1;
+    component.cliente = {
+      id: 1,
+      nome: 'Igor Atualizado',
+      cpf: '123.456.789-01'
+    };
+
+    service.atualizar.and.returnValue(of(clienteAtualizado));
+
+    component.onSubmit();
+
+    expect(service.atualizar).toHaveBeenCalledWith({
+      id: 1,
+      nome: 'Igor Atualizado',
+      cpf: '12345678901'
+    });
+
+    expect(component.success).toBeTrue();
+
+    tick(800);
+
+    expect(router.navigate).toHaveBeenCalledWith(['/clientes/lista']);
+  }));
+
+  it('deve exibir erro ao falhar no salvar', () => {
+    configurarTeste();
+
+    const error = new HttpErrorResponse({
+      error: { errors: ['CPF inválido.'] },
+      status: 400
+    });
+
+    component.cliente = {
+      nome: 'Igor',
+      cpf: '123.456.789-01'
+    };
+
+    service.salvar.and.returnValue(throwError(() => error));
+
+    component.onSubmit();
+
+    expect(component.success).toBeFalse();
+    expect(component.errors.length).toBeGreaterThan(0);
+  });
+
+  it('deve exibir erro ao falhar no atualizar', () => {
+    configurarTeste();
+
+    const error = new HttpErrorResponse({
+      error: { errors: ['Cliente inválido.'] },
+      status: 400
+    });
+
+    component.id = 1;
+    component.cliente = {
+      id: 1,
+      nome: 'Igor',
+      cpf: '123.456.789-01'
+    };
+
+    service.atualizar.and.returnValue(throwError(() => error));
+
+    component.onSubmit();
+
+    expect(component.success).toBeFalse();
+    expect(component.errors.length).toBeGreaterThan(0);
+  });
+
+  it('deve formatar CPF ao alterar campo', () => {
+    configurarTeste();
+
+    const input = document.createElement('input');
+    input.value = '12345678901';
+
+    component.onCpfChange({ target: input } as unknown as Event);
+
+    expect(input.value).toBe('123.456.789-01');
+    expect(component.cliente.cpf).toBe('123.456.789-01');
+  });
+
+  it('deve voltar para lista de clientes', () => {
+    configurarTeste();
+
+    component.voltar();
+
+    expect(router.navigate).toHaveBeenCalledWith(['/clientes/lista']);
+  });
 });

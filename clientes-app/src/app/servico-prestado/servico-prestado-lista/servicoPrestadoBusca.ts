@@ -1,8 +1,8 @@
-import { Cliente } from 'src/app/clientes/cliente';
-
-export class ServicoPrestadoBusca {
+export interface ServicoPrestadoBusca {
+  id: number;
   descricao: string;
   valor: number;
   data: string;
-  cliente: Cliente;
+  idCliente: number;
+  nomeCliente: string;
 }

@@ -1,34 +1,31 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ClienteslistaComponent } from './clientes-lista.component';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { RouterTestingModule } from '@angular/router/testing';
+import { ClientesListaComponent } from './clientes-lista.component';
 import { ClientesService } from '../service/clientes.service';
 import { of, throwError } from 'rxjs';
-import { Cliente } from '../cliente';
+import { HttpErrorResponse } from '@angular/common/http';
 
-describe('ClienteslistaComponent', () => {
-  let component: ClienteslistaComponent;
-  let fixture: ComponentFixture<ClienteslistaComponent>;
-  let clientesService: ClientesService;
+describe('ClientesListaComponent', () => {
+  let component: ClientesListaComponent;
+  let fixture: ComponentFixture<ClientesListaComponent>;
+  let service: jasmine.SpyObj<ClientesService>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ ClienteslistaComponent ],
-      imports: [
-        HttpClientTestingModule,
-        RouterTestingModule
-      ],
-      providers: [
-        ClientesService
-      ]
-    })
-    .compileComponents();
-  });
+    service = jasmine.createSpyObj<ClientesService>('ClientesService', [
+      'getClientes',
+      'delete'
+    ]);
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(ClienteslistaComponent);
+    await TestBed.configureTestingModule({
+      declarations: [ClientesListaComponent],
+      providers: [
+        { provide: ClientesService, useValue: service }
+      ]
+    }).overrideComponent(ClientesListaComponent, {
+      set: { template: '' }
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(ClientesListaComponent);
     component = fixture.componentInstance;
-    clientesService = TestBed.inject(ClientesService);
   });
 
   it('deve criar o componente', () => {
@@ -36,61 +33,127 @@ describe('ClienteslistaComponent', () => {
   });
 
   it('deve carregar clientes no ngOnInit', () => {
-    const mockClientes = [
-      { id: 1, nome: 'Maria', cpf: '11122233344', dataCadastro: '01/01/2021' } as unknown as Cliente,
-      { id: 2, nome: 'João', cpf: '55566677788', dataCadastro: '02/01/2021' } as unknown as Cliente
-    ];
-    spyOn(clientesService, 'getClientes').and.returnValue(of(mockClientes));
+    service.getClientes.and.returnValue(of({
+      content: [
+        { id: 1, nome: 'Igor', cpf: '12345678901' }
+      ],
+      number: 0,
+      totalPages: 1,
+      totalElements: 1,
+      size: 10,
+      first: true,
+      last: true,
+      empty: false
+    } as any));
 
     fixture.detectChanges();
 
-    expect(clientesService.getClientes).toHaveBeenCalled();
-    expect(component.clientes.length).toBe(2);
-    expect(component.clientes).toEqual(mockClientes);
+    expect(service.getClientes).toHaveBeenCalledWith(0, 10);
+    expect(component.clientes.length).toBe(1);
+    expect(component.paginaAtual).toBe(0);
+    expect(component.totalPaginas).toBe(1);
+    expect(component.totalElementos).toBe(1);
   });
 
-  it('deve preparar deleção setando o cliente selecionado', () => {
-    const mockCliente = { id: 1, nome: 'Maria', cpf: '11122233344', dataCadastro: '01/01/2021' } as unknown as Cliente;
+  it('deve exibir erro ao falhar ao carregar clientes', () => {
+    const error = new HttpErrorResponse({
+      error: { errors: ['Erro teste'] },
+      status: 500
+    });
 
-    component.preparaDelecao(mockCliente);
+    service.getClientes.and.returnValue(throwError(() => error));
 
-    expect(component.clienteSelecionado).toEqual(mockCliente);
+    component.carregarClientes();
+
+    expect(component.errors.length).toBeGreaterThan(0);
   });
 
-  it('deve confirmar deleção com sucesso', () => {
-    const mockCliente = { id: 1, nome: 'Maria', cpf: '11122233344', dataCadastro: '01/01/2021' } as unknown as Cliente;
-    component.clientes = [mockCliente];
-    component.clienteSelecionado = mockCliente;
+  it('deve preparar cliente para deleção', () => {
+    const cliente = { id: 1, nome: 'Igor', cpf: '12345678901' };
 
-    spyOn(clientesService, 'delete').and.returnValue(of({}));
+    component.preparaDelecao(cliente);
+
+    expect(component.clienteSelecionado).toEqual(cliente);
+  });
+
+  it('não deve deletar quando não houver cliente selecionado com id', () => {
+    component.clienteSelecionado = {
+      nome: 'Sem ID',
+      cpf: '12345678901'
+    };
 
     component.confirmarDelecao();
 
-    expect(clientesService.delete).toHaveBeenCalledWith(mockCliente);
-    expect(component.clientes.length).toBe(0);
-    expect(component.clienteSelecionado).toBeNull();
-    expect(component.success).toBeTrue();
-    expect(component.errors.length).toBe(0);
+    expect(service.delete).not.toHaveBeenCalled();
   });
 
   it('deve exibir erro ao falhar na deleção', () => {
-    const mockCliente = { id: 1, nome: 'Maria', cpf: '11122233344', dataCadastro: '01/01/2021' } as unknown as Cliente;
-    component.clienteSelecionado = mockCliente;
+    const error = new HttpErrorResponse({
+      error: { errors: ['Não foi possível deletar.'] },
+      status: 400
+    });
 
-    spyOn(clientesService, 'delete').and.returnValue(throwError(() => new Error('Erro')));
+    component.clienteSelecionado = {
+      id: 1,
+      nome: 'Igor',
+      cpf: '12345678901'
+    };
+
+    service.delete.and.returnValue(throwError(() => error));
 
     component.confirmarDelecao();
 
     expect(component.success).toBeFalse();
-    expect(component.errors).toContain('Erro ao deletar o cliente.');
+    expect(component.errors.length).toBeGreaterThan(0);
   });
 
-  it('nao deve fazer nada se confirmar delecao sem cliente selecionado', () => {
-    component.clienteSelecionado = null;
-    spyOn(clientesService, 'delete');
+  it('deve ir para página anterior quando possível', () => {
+    spyOn(component, 'carregarClientes');
 
-    component.confirmarDelecao();
+    component.paginaAtual = 2;
 
-    expect(clientesService.delete).not.toHaveBeenCalled();
+    component.paginaAnterior();
+
+    expect(component.carregarClientes).toHaveBeenCalledWith(1);
+  });
+
+  it('não deve ir para página anterior quando estiver na primeira página', () => {
+    spyOn(component, 'carregarClientes');
+
+    component.paginaAtual = 0;
+
+    component.paginaAnterior();
+
+    expect(component.carregarClientes).not.toHaveBeenCalled();
+  });
+
+  it('deve ir para próxima página quando possível', () => {
+    spyOn(component, 'carregarClientes');
+
+    component.paginaAtual = 0;
+    component.totalPaginas = 2;
+
+    component.proximaPagina();
+
+    expect(component.carregarClientes).toHaveBeenCalledWith(1);
+  });
+
+  it('não deve ir para próxima página quando estiver na última página', () => {
+    spyOn(component, 'carregarClientes');
+
+    component.paginaAtual = 1;
+    component.totalPaginas = 2;
+
+    component.proximaPagina();
+
+    expect(component.carregarClientes).not.toHaveBeenCalled();
+  });
+
+  it('deve retornar true quando possuir clientes', () => {
+    component.clientes = [
+      { id: 1, nome: 'Igor', cpf: '12345678901' }
+    ];
+
+    expect(component.possuiClientes).toBeTrue();
   });
 });

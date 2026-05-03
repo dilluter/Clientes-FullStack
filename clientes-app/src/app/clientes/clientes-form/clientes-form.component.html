@@ -6,10 +6,10 @@
         <a routerLink="/home">Home</a>
       </li>
       <li class="breadcrumb-item">
-        <a routerLink="/clientes-lista">Clientes</a>
+        <a routerLink="/clientes/lista">Clientes</a>
       </li>
       <li class="breadcrumb-item active">
-        {{ cliente.id ? 'Edição' : 'Cadastro'}}
+        {{ cliente.id ? 'Edição' : 'Cadastro' }}
       </li>
     </ol>
   </nav>
@@ -20,7 +20,8 @@
 
       <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0">
-          <i class="fa fa-user"></i> {{ cliente.id ? 'Edição de Clientes' : 'Cadastro de Clientes'}}
+          <i class="fa fa-user"></i>
+          {{ cliente.id ? 'Edição de Cliente' : 'Cadastro de Cliente' }}
         </h5>
 
         <button
@@ -29,36 +30,38 @@
           (click)="voltar()">
           Voltar
         </button>
-
       </div>
 
       <div class="card-body">
 
-        <div class="row mb-3">
-          <div class="alert alert-success" *ngIf="success">
-            Cliente salvo/atualizado com sucesso!
-          </div>
+        <div class="row mb-3" *ngIf="success || errors.length > 0">
+          <div class="col-12">
+            <div class="alert alert-success" *ngIf="success">
+              Cliente salvo/atualizado com sucesso!
+            </div>
 
-          <div
-            class="alert alert-danger"
-            *ngFor="let erro of errors">
-            {{ erro }}
+            <div class="alert alert-danger" *ngFor="let erro of errors">
+              {{ erro }}
+            </div>
           </div>
         </div>
 
         <div class="row" *ngIf="cliente.id">
           <div class="col-md-6 mb-3">
-            <label class="form-label">ID</label>
+            <label class="form-label" for="id">ID</label>
             <input
+              id="id"
               type="text"
               class="form-control"
               [ngModel]="cliente.id"
               name="id"
               readonly>
           </div>
+
           <div class="col-md-6 mb-3">
-            <label class="form-label">Data de Cadastro</label>
+            <label class="form-label" for="dataDeCadastro">Data de Cadastro</label>
             <input
+              id="dataDeCadastro"
               type="text"
               class="form-control"
               [ngModel]="cliente.dataDeCadastro"
@@ -69,37 +72,50 @@
 
         <div class="row">
           <div class="col-md-6 mb-3">
-            <label class="form-label">Nome</label>
+            <label class="form-label" for="nome">Nome</label>
             <input
+              id="nome"
               type="text"
               class="form-control"
               placeholder="Nome completo"
               name="nome"
               required
+              maxlength="150"
               [(ngModel)]="cliente.nome">
           </div>
 
           <div class="col-md-6 mb-3">
-            <label class="form-label">CPF</label>
+            <label class="form-label" for="cpf">CPF</label>
             <input
+              id="cpf"
               type="text"
               class="form-control"
-              placeholder="00000000000"
-              maxlength="11"
+              placeholder="000.000.000-00"
+              maxlength="14"
               name="cpf"
               required
-              [(ngModel)]="cliente.cpf">
+              [(ngModel)]="cliente.cpf"
+              (input)="onCpfChange($event)">
           </div>
         </div>
+
         <div class="d-flex gap-2 mt-3">
           <button
             type="submit"
-            class="btn btn-success"*ngIf="!cliente.id">Salvar
+            class="btn btn-success"
+            [disabled]="clienteForm.invalid"
+            *ngIf="!cliente.id">
+            Salvar
           </button>
+
           <button
             type="submit"
-            class="btn btn-primary"*ngIf="cliente.id">Atualizar
+            class="btn btn-primary"
+            [disabled]="clienteForm.invalid"
+            *ngIf="cliente.id">
+            Atualizar
           </button>
+
           <button
             type="button"
             class="btn btn-danger"
@@ -107,6 +123,7 @@
             Cancelar
           </button>
         </div>
+
       </div>
     </div>
   </form>

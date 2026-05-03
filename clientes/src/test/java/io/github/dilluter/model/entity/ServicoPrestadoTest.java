@@ -1,31 +1,34 @@
 package io.github.dilluter.model.entity;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public class ServicoPrestadoTest {
+import static org.junit.jupiter.api.Assertions.*;
+
+class ServicoPrestadoTest {
 
     @Test
-    public void deveTestarGettersESettersDoServico() {
-        Cliente cliente = new Cliente();
-        cliente.setNome("Maria Oliveira");
-        
-        BigDecimal valorServico = new BigDecimal("150.00");
-        LocalDate dataServico = LocalDate.of(2023, 10, 20);
+    void deveCriarServicoPrestadoComBuilder() {
+        Cliente cliente = Cliente.builder()
+                .id(1)
+                .nome("Igor")
+                .cpf("52998224725")
+                .build();
 
-        ServicoPrestado servico = new ServicoPrestado();
-        servico.setId(10);
-        servico.setDescricao("Consultoria");
-        servico.setCliente(cliente);
-        servico.setValor(valorServico);
-        servico.setData(dataServico);
+        ServicoPrestado servico = ServicoPrestado.builder()
+                .id(1)
+                .descricao("Desenvolvimento de sistema")
+                .cliente(cliente)
+                .valor(new BigDecimal("1500.00"))
+                .data(LocalDate.of(2026, 5, 3))
+                .build();
 
-        Assert.assertEquals(Integer.valueOf(10), servico.getId());
-        Assert.assertEquals("Consultoria", servico.getDescricao());
-        Assert.assertEquals("Maria Oliveira", servico.getCliente().getNome());
-        Assert.assertEquals(valorServico, servico.getValor());
-        Assert.assertEquals(dataServico, servico.getData());
+        assertEquals(1, servico.getId());
+        assertEquals("Desenvolvimento de sistema", servico.getDescricao());
+        assertEquals(cliente, servico.getCliente());
+        assertEquals(new BigDecimal("1500.00"), servico.getValor());
+        assertEquals(LocalDate.of(2026, 5, 3), servico.getData());
     }
 }

@@ -7,10 +7,12 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "servico_prestado")
 public class ServicoPrestado {
 
     @Id
@@ -20,11 +22,11 @@ public class ServicoPrestado {
     @Column(nullable = false, length = 150)
     private String descricao;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_cliente", nullable = false)
     private Cliente cliente;
 
-    @Column(nullable = false)
+    @Column(nullable = false, precision = 15, scale = 2)
     private BigDecimal valor;
 
     @Column(nullable = false)
