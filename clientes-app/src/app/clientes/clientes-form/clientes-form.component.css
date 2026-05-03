@@ -31,11 +31,13 @@ label {
   box-shadow: 0 0 0 0.15rem rgba(25, 135, 84, 0.25);
 }
 
-.btn-success {
+.btn-success,
+.btn-primary {
   padding: 10px 18px;
   font-weight: 600;
 }
 
-.btn-outline-secondary {
+.btn-outline-secondary,
+.btn-danger {
   border-radius: 6px;
 }

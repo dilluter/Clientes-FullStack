@@ -1,7 +1,31 @@
-<nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">Meus Clientes</a>
-    <button class="btn btn-link btn-sm order-1 order-lg-0" 
-            id="sidebarToggle" href="#">
-        <i class="fas fa-bars"></i>
-    </button>            
+<nav class="sb-topnav navbar navbar-expand navbar-dark topbar">
+
+  <a class="navbar-brand brand" routerLink="/home">
+    <i class="fas fa-users"></i>
+    <span>Meus Clientes</span>
+  </a>
+
+  <button
+    class="sidebar-toggle"
+    id="sidebarToggle"
+    type="button"
+    title="Abrir/fechar menu"
+    (click)="toggleSidebar($event)">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <div class="topbar-right">
+    <span class="user-text d-none d-md-inline">
+      Sistema Administrativo
+    </span>
+
+    <button
+      type="button"
+      class="btn btn-logout"
+      (click)="logout()">
+      <i class="fas fa-sign-out-alt"></i>
+      <span>Sair</span>
+    </button>
+  </div>
+
 </nav>

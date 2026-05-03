@@ -1,0 +1,110 @@
+.topbar {
+  height: 56px;
+  background: #26323d;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+}
+
+.brand {
+  width: 240px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0;
+  padding: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #ffffff;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.brand:hover {
+  color: #ffffff;
+}
+
+.brand i {
+  font-size: 1.15rem;
+}
+
+.sidebar-toggle {
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 6px;
+  color: #cbd5e1;
+  background: transparent;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-left: 8px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.sidebar-toggle:hover {
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+.sidebar-toggle:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.topbar-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.user-text {
+  color: #d1d5db;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.btn-logout {
+  height: 34px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 6px;
+  padding: 0 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  background-color: transparent;
+  transition: all 0.2s ease-in-out;
+  white-space: nowrap;
+}
+
+.btn-logout:hover {
+  background-color: #dc3545;
+  border-color: #dc3545;
+  color: #ffffff;
+}
+
+@media (max-width: 768px) {
+  .topbar {
+    padding: 0 14px;
+  }
+
+  .brand {
+    width: auto;
+    font-size: 1rem;
+  }
+
+  .sidebar-toggle {
+    margin-left: 12px;
+  }
+
+  .btn-logout span {
+    display: none;
+  }
+}

@@ -1,7 +1,6 @@
 package io.github.dilluter.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.dilluter.dto.ServicoPrestadoDTO;
 import io.github.dilluter.exception.ExceptionHandlerController;
 import io.github.dilluter.model.entity.Cliente;
 import io.github.dilluter.model.entity.ServicoPrestado;
